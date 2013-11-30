@@ -69,16 +69,18 @@ public class MainActivity extends Activity {
             @Override
             public void onSuccess(String response) {
                 try {
+                    if(response == "cards"){
+                         try{
                     jArray = new JSONArray(response); // Parse JSON String to JSON Array
-                    for (int i = 0; i < jArray.length(); ++i) { // Loop over Array
+                    for (int i = 0; i < 2; /*jArray.length()*/ ++i) { // Loop over Array
                         Card card = new Card(); // Create a new Card
 
                         JSONObject jObject = jArray.getJSONObject(i); // Fetch the ith JSON Object
                         // from the JSON Array
-                        card.setName(jObject.getString("Set")); // Parse Name from the JSON
+                        //card.setName(jObject.getString("Set")); // Parse Name from the JSON
                         // Object, and put into our object
-                        card.setName(jObject.getString("Name")); // Parse Name from the JSON
-                        card.setType(jObject.getString("Type")); // Do the same for type
+                        card.setName(jObject.getString("name")); // Parse Name from the JSON
+                        card.setType(jObject.getString("type")); // Do the same for type
 
                         // Remember there are other items in the JSON Object, and they are of other
                         // Types, so you might want to switch based on type and create an object
@@ -100,14 +102,19 @@ public class MainActivity extends Activity {
                         adapter.add(card);
                     }
                     Log.d("List Size", "Size of items: " + Integer.toString(cards.size()));
+                         } catch (JSONException e) {
+                             Log.d("JSON Parse - done", e.toString());
+                         }
+                    }
                 } catch (JSONException e) {
                     Log.d("JSON Parse", e.toString());
                 }
             }
 
         }  );
+    }
 
-        if (savedInstanceState == null) {
+    /*    if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
@@ -115,7 +122,7 @@ public class MainActivity extends Activity {
     }
     /**
      * A placeholder fragment containing a simple view.
-     */
+     *//*
     public static class PlaceholderFragment extends Fragment {
 
         public PlaceholderFragment() {
@@ -127,7 +134,7 @@ public class MainActivity extends Activity {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             return rootView;
         }
-    }
+    }*/
 
     /**
      * Created by MXPS on 11/29/13.
