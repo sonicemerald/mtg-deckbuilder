@@ -24,13 +24,15 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 public class MainActivity extends Activity {
-    public String json = "https://bitbucket.org/sonicemerald/mtgjsonfile/raw/f7b2f206127985b81d4296e4a0cfe4e5c87740b2/AllSets.json";
-    public String jsonmtg = "http://mtgjson.com/json/THS.json";
+    public String set = "THS";
+    public String jsonmtg = "http://mtgjson.com/json/".concat(set).concat(".json");
 
     List<Card> cards;
     ListView listView;
     ArrayAdapter<Card> adapter;
     JSONArray jArray;
+    JSONArray aArray;
+    String part2;
     String tempUrl;
 
 
@@ -69,18 +71,31 @@ public class MainActivity extends Activity {
             @Override
             public void onSuccess(String response) {
                 try {
-                    if(response == "cards"){
+                    //aArray = new JSONArray(response);// Parse JSON String to JSON Array
+                    JSONObject object = new JSONObject(response);
+                    jArray = object.getJSONArray("cards");
                          try{
-                    jArray = new JSONArray(response); // Parse JSON String to JSON Array
-                    for (int i = 0; i < 2; /*jArray.length()*/ ++i) { // Loop over Array
-                        Card card = new Card(); // Create a new Card
+                                for (int i = 0; i < jArray.length(); ++i) { // Loop over Array
+                                Card card = new Card(); // Create a new Card
 
-                        JSONObject jObject = jArray.getJSONObject(i); // Fetch the ith JSON Object
-                        // from the JSON Array
-                        //card.setName(jObject.getString("Set")); // Parse Name from the JSON
-                        // Object, and put into our object
-                        card.setName(jObject.getString("name")); // Parse Name from the JSON
-                        card.setType(jObject.getString("type")); // Do the same for type
+                                JSONObject jObject = jArray.getJSONObject(i); // Fetch the ith JSON Object
+                                // from the JSON Array
+                                 //card.setName(jObject.getString("Set")); // Parse Name from the JSON
+                                // Object, and put into our object
+                                card.setColor(jObject.getString("colors"));
+                                    try{
+                                card.setSubtype(jObject.getString("subtypes"));
+                                    } catch (JSONException e) {
+                                       card.setSubtype("null");
+                                    }
+                                card.setName(jObject.getString("name")); // Parse Name from the JSON
+                                card.setType(jObject.getString("type")); // Do the same for type
+                                    try{
+                                card.setManacost(jObject.getInt("cmc"));
+                                    } catch (JSONException e) {
+                                        card.setManacost(0);
+                                    }
+                                card.setImageName(jObject.getString("imageName"));
 
                         // Remember there are other items in the JSON Object, and they are of other
                         // Types, so you might want to switch based on type and create an object
@@ -100,13 +115,12 @@ public class MainActivity extends Activity {
                         // Add an Item to the Adapter, which will add it to the items List, and
                         // update the List View
                         adapter.add(card);
-                    }
+                                }
+                             } catch (JSONException e) {
+                                        Log.d("JSON Parse", e.toString());
+                              };
                     Log.d("List Size", "Size of items: " + Integer.toString(cards.size()));
-                         } catch (JSONException e) {
-                             Log.d("JSON Parse - done", e.toString());
-                         }
-                    }
-                } catch (JSONException e) {
+                    } catch (JSONException e) {
                     Log.d("JSON Parse", e.toString());
                 }
             }
@@ -141,15 +155,15 @@ public class MainActivity extends Activity {
      */
 
     public class Card {
-        public String set;
-        public String name;
-        public String imageName;
-        public String type;
-        public String subtype = "";
-        public String color = "";
+        public String set = "set";
+        public String name = "name";
+        public String imageName = "iname";
+        public String type = "type";
+        public String subtype = "stype";
+        public String color = "color";
         public int manacost = 0;
-        public String cardtext = "";
-        public String flavortext = "";
+        public String cardtext = "cardtext";
+        public String flavortext = "flavortext";
 
         public Card() {
         }
