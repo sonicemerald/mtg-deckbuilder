@@ -1,11 +1,25 @@
-<LinearLayout
-    android:orientation="vertical"
+<RelativeLayout
+    android:orientation="horizontal"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditText
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/filterSetTextView"
+        android:layout_toLeftOf="@+id/filterSetButton"
+        android:layout_alignBottom="@+id/filterSetButton" />
+    <Button
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/filterSetButton"
+        android:text="go"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true" />
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/filterSetTextView">
     </FrameLayout>
-</LinearLayout>
+</RelativeLayout>

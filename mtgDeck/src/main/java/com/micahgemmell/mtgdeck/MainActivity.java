@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,7 +32,11 @@ import com.micahgemmell.mtgdeck.Card;
 
 public class MainActivity extends Activity implements listView_F.OnCardView {
     public String set = "THS";
-    public String jsonmtg = "http://mtgjson.com/json/".concat(set).concat(".json");
+    public String jsonmtg = "http://mtgjson.com/json/";
+    public String json = ".json";
+    public String URL = "";
+            //.concat(set).concat(".json");
+
 
     List<Card> cards;
     ListView listView;
@@ -40,6 +46,9 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
 
     listView_F listView_f;
     cardView_F cardView_f;
+
+    Button addSetButton;
+    EditText addSetEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +60,32 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
 
        listView_f = new listView_F(cards);
 
+        addSetButton = (Button) findViewById(R.id.filterSetButton);
+        addSetEditText = (EditText) findViewById(R.id.filterSetTextView);
+
+        addSetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                set = addSetEditText.getText().toString();
+                Log.d("b", set.toString());
+                if (set != null && set.length() > 0)
+                   URL = jsonmtg.concat(set).concat(json);
+                    AsyncHttp(URL);
+                   // listFragment.addItem(new TodoItem(itemToAdd.toString(), false));
+                addSetEditText.setText("");
+            }
+        });
+
+
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
                     .add(R.id.container, listView_f)
                     .commit();
         }
+    };
 
+
+        public void AsyncHttp(String URL){
         // Setup Listview for cards (now done in fragment)
      //   listView = (ListView) findViewById(R.id.listView);
 
@@ -76,7 +105,7 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
         // Setup the AsyncHttpClient to fetch the JSON String
         AsyncHttpClient client = new AsyncHttpClient();
         // Spin up a new thread, and fetch the JSON
-        client.get(jsonmtg, new AsyncHttpResponseHandler() {
+        client.get(URL, new AsyncHttpResponseHandler() {
 
             // When the JSON has been fetched, we will process it
             // The JSON is simply a string at this point. Now because the JSON is formated as a
@@ -146,6 +175,7 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
     }
 
 
+
     @Override
     public void onCardViewUpdate(int position){
     cardView_f = new cardView_F(cards.get(position));
@@ -155,13 +185,13 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
                     .commit();
 
         String image = cards.get(position).getImageName();
-        String set = cards.get(position).getSet();
-        String url = "http://mtgimage.com/set/".concat(set).concat("/").concat(image).concat(".jpg");
-        Log.d("tag", url);
+        //String sset = cards.get(position).getSet();
+        String imageURL = "http://mtgimage.com/set/".concat(set).concat("/").concat(image).concat(".jpg");
+        Log.d("tag", imageURL);
 
         AsyncHttpClient client = new AsyncHttpClient();
         String[] allowedContentTypes = new String[] { "image/jpeg" };
-        client.get(url, new BinaryHttpResponseHandler(allowedContentTypes) {
+        client.get(imageURL, new BinaryHttpResponseHandler(allowedContentTypes) {
             @Override
             public void onSuccess(byte[] fileData) {
                 Bitmap imageBitmap = BitmapFactory.decodeByteArray(fileData, 0, fileData.length);
