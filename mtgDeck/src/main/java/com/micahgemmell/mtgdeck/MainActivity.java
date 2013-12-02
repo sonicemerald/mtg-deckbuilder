@@ -17,6 +17,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,9 +37,10 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
     public String jsonmtg = "http://mtgjson.com/json/";
     public String json = ".json";
     public String URL = "";
+
             //.concat(set).concat(".json");
 
-
+    List<Card> deck;
     List<Card> cards;
     ListView listView;
     ArrayAdapter<Card> adapter;
@@ -45,6 +48,7 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
     String tempUrl;
 
     listView_F listView_f;
+    deckView_F deckView_f;
     cardView_F cardView_f;
 
     Button addSetButton;
@@ -57,20 +61,21 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
 
         // Setup card Container
         cards = new ArrayList<Card>();
-
+        deck = new ArrayList<Card>();
+        // spin up a new listView Fragment of cards
        listView_f = new listView_F(cards);
 
-        addSetButton = (Button) findViewById(R.id.filterSetButton);
-        addSetEditText = (EditText) findViewById(R.id.filterSetTextView);
+       addSetButton = (Button) findViewById(R.id.filterSetButton);
+       addSetEditText = (EditText) findViewById(R.id.filterSetTextView);
 
-        addSetButton.setOnClickListener(new View.OnClickListener() {
+       addSetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 set = addSetEditText.getText().toString();
                 Log.d("b", set.toString());
                 if (set != null && set.length() > 0)
                    URL = jsonmtg.concat(set).concat(json);
-                    AsyncHttp(URL);
+                    ParseCardsFrom(URL);
                    // listFragment.addItem(new TodoItem(itemToAdd.toString(), false));
                 addSetEditText.setText("");
             }
@@ -85,7 +90,7 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
     };
 
 
-        public void AsyncHttp(String URL){
+    public void ParseCardsFrom(String URL){
         // Setup Listview for cards (now done in fragment)
      //   listView = (ListView) findViewById(R.id.listView);
 
@@ -201,4 +206,48 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
         });
 
     }
+
+   /* @Override
+   public void onListViewUpdate(String URL){
+        AsyncHttp(URL);
+    } */
+
+    @Override
+    public  void addCardToDeck(int position){
+        deck.add(cards.get(position));
+        Log.d("gta", "added ".concat(cards.get(position).getName()));
+        //Toast.makeText(context, "added ".concat(cards.get(position).getName()), Toast.LENGTH_SHORT);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        switch (item.getItemId()) {
+            case R.id.myDeck:
+                     deckView_f = new deckView_F(deck);
+                    getFragmentManager().beginTransaction()
+                            .replace(R.id.container, deckView_f)
+                            .addToBackStack("Your Deck")
+                            .commit();
+             return true;
+            case R.id.searchCards:
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.container, listView_f)
+                        .addToBackStack("Search")
+                        .commit();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 }
