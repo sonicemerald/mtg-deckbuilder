@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <EditText
+    <Spinner
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:id="@+id/filterSetTextView"
@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:id="@+id/filterSetButton"
-        android:text="go"
+        android:text="Go"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true" />
     <FrameLayout

@@ -13,10 +13,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -52,7 +55,10 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
     cardView_F cardView_f;
 
     Button addSetButton;
-    EditText addSetEditText;
+    Spinner addSetEditText;
+    String[] card_array;
+    ArrayAdapter<String> adapter2;
+    //AdapterView.OnItemSelectedListener setSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,12 +69,23 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
         cards = new ArrayList<Card>();
         deck = new ArrayList<Card>();
         // spin up a new listView Fragment of cards
-       listView_f = new listView_F(cards);
+        listView_f = new listView_F(cards);
 
-       addSetButton = (Button) findViewById(R.id.filterSetButton);
-       addSetEditText = (EditText) findViewById(R.id.filterSetTextView);
+        card_array = getResources().getStringArray(R.array.sets);
+        adapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, card_array);
 
-       addSetButton.setOnClickListener(new View.OnClickListener() {
+        addSetButton = (Button) findViewById(R.id.filterSetButton);
+        addSetEditText = (Spinner) findViewById(R.id.filterSetTextView);
+
+        addSetEditText.setAdapter(adapter2);
+
+        addSetEditText.getOnItemSelectedListener();
+        set = addSetEditText.getSelectedItem().toString();
+        URL = jsonmtg.concat(set).concat(json);
+        ParseCardsFrom(URL);
+
+        /*
+        addSetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 set = addSetEditText.getText().toString();
@@ -80,6 +97,7 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
                 addSetEditText.setText("");
             }
         });
+        */
 
 
         if (savedInstanceState == null) {
