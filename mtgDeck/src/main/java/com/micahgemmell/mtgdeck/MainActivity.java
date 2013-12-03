@@ -1,26 +1,18 @@
 package com.micahgemmell.mtgdeck;
 
 import android.app.Activity;
-import android.app.ActionBar;
-import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,10 +25,9 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import com.loopj.android.http.BinaryHttpResponseHandler;
-import com.micahgemmell.mtgdeck.Card;
 
 public class MainActivity extends Activity implements listView_F.OnCardView {
-    public String set = "THS";
+    //public String set = "THS";
     public String jsonmtg = "http://mtgjson.com/json/";
     public String json = ".json";
     public String URL = "";
@@ -55,10 +46,9 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
     cardView_F cardView_f;
 
     Button addSetButton;
-    Spinner addSetEditText;
-    String[] card_array;
-    ArrayAdapter<String> adapter2;
-    //AdapterView.OnItemSelectedListener setSelected;
+    Spinner addSetSpinner;
+    String[] cardSet_array;
+    ArrayAdapter<String> adapterforStringArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,34 +57,49 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
 
         // Setup card Container
         cards = new ArrayList<Card>();
-        deck = new ArrayList<Card>();
+        deck = new ArrayList<Card>(); // a deck of cards
         // spin up a new listView Fragment of cards
         listView_f = new listView_F(cards);
 
-        card_array = getResources().getStringArray(R.array.sets);
-        adapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, card_array);
+        cardSet_array = getResources().getStringArray(R.array.sets);
+        adapterforStringArray = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, cardSet_array);
 
         addSetButton = (Button) findViewById(R.id.filterSetButton);
-        addSetEditText = (Spinner) findViewById(R.id.filterSetTextView);
+        addSetSpinner = (Spinner) findViewById(R.id.filterSetTextView);
 
-        addSetEditText.setAdapter(adapter2);
+        addSetSpinner.setAdapter(adapterforStringArray);
 
-        addSetEditText.getOnItemSelectedListener();
-        set = addSetEditText.getSelectedItem().toString();
-        URL = jsonmtg.concat(set).concat(json);
-        ParseCardsFrom(URL);
+        addSetSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                       cards.removeAll(cards);
+                       String set = addSetSpinner.getSelectedItem().toString();
+                       URL = jsonmtg.concat(set).concat(json);
+                       ParseCardsFrom(URL);
+                Log.d("d", "onspinnerSelected");
+                    getFragmentManager().beginTransaction()
+                           .detach(listView_f)
+                           .attach(listView_f)
+                           .commit();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         /*
         addSetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                set = addSetEditText.getText().toString();
+                set = addSetSpinner.getText().toString();
                 Log.d("b", set.toString());
                 if (set != null && set.length() > 0)
                    URL = jsonmtg.concat(set).concat(json);
                     ParseCardsFrom(URL);
                    // listFragment.addItem(new TodoItem(itemToAdd.toString(), false));
-                addSetEditText.setText("");
+                addSetSpinner.setText("");
             }
         });
         */
@@ -142,8 +147,10 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
                     JSONObject object = new JSONObject(response);
                     jArray = object.getJSONArray("cards");
                          try{
+
                                 for (int i = 0; i < jArray.length(); ++i) { // Loop over Array
                                 Card card = new Card(); // Create a new Card
+                                card.setSet(object.getString("code"));
 
                                 JSONObject jObject = jArray.getJSONObject(i); // Fetch the ith JSON Object
                                 // from the JSON Array
@@ -162,6 +169,7 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
                                     } catch (JSONException e) {
                                         card.setManacost(0);
                                     }
+
                                 card.setImageName(jObject.getString("imageName"));
                                 //card.setSet(jObject.getString("set"));
 
@@ -184,6 +192,8 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
                         // update the List View
                         listView_f.adapter.add(card);
                         //adapter.add(card);
+
+
                                 }
                              } catch (JSONException e) {
                                         Log.d("JSON Parse", e.toString());
@@ -195,45 +205,68 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
             }
 
         }  );
+             /*   listView_f = new listView_F(cards);
+                getFragmentManager().beginTransaction()
+                    .replace(R.id.container, listView_f)
+                    .commit();*/
     }
 
 
 
     @Override
-    public void onCardViewUpdate(int position){
-    cardView_f = new cardView_F(cards.get(position));
+    public void onCardViewUpdate(int position, String calledBy){
+        String image;
+        String set;
+        String imageURL;
+        if(calledBy == "deck")// == "deck")
+        {
+            cardView_f = new cardView_F(deck.get(position));
+            image = deck.get(position).getImageName();
+            set = deck.get(position).getSet();
+            imageURL = "http://mtgimage.com/set/".concat(set).concat("/").concat(image).concat(".jpg");
+            Log.d("tag", imageURL);
+            getCardImageFrom(imageURL);
+        } else if (calledBy == "set"){
+            cardView_f = new cardView_F(cards.get(position));
+            image = cards.get(position).getImageName();
+            set = cards.get(position).getSet();
+            imageURL = "http://mtgimage.com/set/".concat(set).concat("/").concat(image).concat(".jpg");
+            Log.d("tag", imageURL);
+            getCardImageFrom(imageURL);
+        }
         getFragmentManager().beginTransaction()
                     .replace(R.id.container, cardView_f)
                     .addToBackStack("CardView Back")
                     .commit();
+        }
 
-        String image = cards.get(position).getImageName();
-        //String sset = cards.get(position).getSet();
-        String imageURL = "http://mtgimage.com/set/".concat(set).concat("/").concat(image).concat(".jpg");
-        Log.d("tag", imageURL);
+    public void getCardImageFrom(String imageURL){
+            AsyncHttpClient client = new AsyncHttpClient();
+            String[] allowedContentTypes = new String[] { "image/jpeg" };
+             client.get(imageURL, new BinaryHttpResponseHandler(allowedContentTypes) {
+                @Override
+                public void onSuccess(byte[] fileData) {
+                    Bitmap imageBitmap = BitmapFactory.decodeByteArray(fileData, 0, fileData.length);
+                    if (cardView_f != null)
+                     cardView_f.setImageView(imageBitmap);
+              }
+            });
+        }
 
-        AsyncHttpClient client = new AsyncHttpClient();
-        String[] allowedContentTypes = new String[] { "image/jpeg" };
-        client.get(imageURL, new BinaryHttpResponseHandler(allowedContentTypes) {
-            @Override
-            public void onSuccess(byte[] fileData) {
-                Bitmap imageBitmap = BitmapFactory.decodeByteArray(fileData, 0, fileData.length);
-                if (cardView_f != null)
-                    cardView_f.setImageView(imageBitmap);
-            }
-        });
-
-    }
-
-   /* @Override
+  /* @Override
    public void onListViewUpdate(String URL){
-        AsyncHttp(URL);
+       listView_f = new listView_F()
+       getFragmentManager().beginTransaction()
+               .replace(R.id.container, listView_f)
+               .addToBackStack("CardView Back")
+               .commit();
     } */
 
     @Override
     public  void addCardToDeck(int position){
-        deck.add(cards.get(position));
-        Log.d("gta", "added ".concat(cards.get(position).getName()));
+        Card card = cards.get(position);
+        deck.add(card);
+        Log.d("card", "added ".concat(card.getName().toString()));
         //Toast.makeText(context, "added ".concat(cards.get(position).getName()), Toast.LENGTH_SHORT);
     }
 

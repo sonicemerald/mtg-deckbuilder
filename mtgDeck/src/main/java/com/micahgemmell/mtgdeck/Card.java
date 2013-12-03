@@ -8,7 +8,7 @@ public class Card
     public String imageName = "iname";
     public int manacost = 0;
     public String name = "name";
-    public String set = "THS";
+    public String set = "set";
     public String subtype = "stype";
     public String type = "type";
 

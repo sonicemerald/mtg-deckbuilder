@@ -52,12 +52,13 @@ public class deckView_F
 
     public void onItemClick(AdapterView<?> paramAdapterView, View paramView, int paramInt, long paramLong)
     {
-        this.mListener.onCardViewUpdate(paramInt);
+        String calledBy = "deck";
+        this.mListener.onCardViewUpdate(paramInt, calledBy);
     }
 
     public static abstract interface OnCardView
     {
-        public abstract void addCardToDeck(int paramInt);
+        public abstract void addCardToDeck(int paramInt, String calledBy);
 
         public abstract void onCardViewUpdate1(int paramInt);
     }

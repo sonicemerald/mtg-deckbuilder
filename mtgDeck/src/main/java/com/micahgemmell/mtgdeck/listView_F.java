@@ -55,7 +55,8 @@ public class listView_F
 
     public void onItemClick(AdapterView<?> paramAdapterView, View paramView, int paramInt, long paramLong)
     {
-        this.mListener.onCardViewUpdate(paramInt);
+        String calledBy = "set";
+        this.mListener.onCardViewUpdate(paramInt, calledBy);
     }
 
     public boolean onItemLongClick(AdapterView<?> paramAdapterView, View paramView, int paramInt, long paramLong)
@@ -67,8 +68,8 @@ public class listView_F
 
     public static abstract interface OnCardView
     {
-        public abstract void addCardToDeck(int paramInt);
+        public abstract void addCardToDeck(int position);
 
-        public abstract void onCardViewUpdate(int paramInt);
+        public abstract void onCardViewUpdate(int paramInt, String calledBy);
     }
 }
