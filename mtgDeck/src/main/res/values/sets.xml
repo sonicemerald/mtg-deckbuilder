@@ -1,5 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
     <resources>
+        <string-array name="setNames">
+            <item>Limited Edition Alpha</item>
+            <item>Limited Edition Beta</item>
+            <item>Unlimited Edition</item>
+            <item>Arabian Nights</item>
+            <item>Antiquities</item>
+            <item>Revised Edition</item>
+            <item>Legends</item>
+            <item>The Dark</item>
+            <item>Fallen Empires</item>
+            <item>Fourth Edition</item>
+            <item>Ice Age</item>
+            <item>Chronicles</item>
+            <item>Homelands</item>
+            <item>Alliances</item>
+            <item>Mirage</item>
+            <item>Visions</item>
+            <item>Fifth Edition</item>
+            <item>Portal</item>
+            <item>Weatherlight</item>
+            <item>Tempest</item>
+            <item>Stronghold</item>
+            <item>Portal Second Age</item>
+            <item>Exodus</item>
+            <item>Unglued</item>
+            <item>Urza\'s Saga</item>
+            <item>Urza\'s Legacy</item>
+            <item>Classic Sixth Edition</item>
+            <item>Portal Three Kingdoms</item>
+            <item>Urza\'s Destiny</item>
+            <item>Starter 1999</item>
+            <item>Mercadian Masques</item>
+            <item>Battle Royale Box Set</item>
+            <item>Nemesis</item>
+            <item>Starter 2000</item>
+            <item>Prophecy</item>
+            <item>Beatdown Box Set</item>
+            <item>Invasion</item>
+            <item>Planeshift</item>
+            <item>Seventh Edition</item>
+            <item>Apocalypse</item>
+            <item>Odyssey</item>
+            <item>Torment</item>
+            <item>Judgment</item>
+            <item>Onslaught</item>
+            <item>Legions</item>
+            <item>Scourge</item>
+            <item>Eighth Edition</item>
+            <item>Mirrodin</item>
+            <item>Darksteel</item>
+            <item>Fifth Dawn</item>
+            <item>Champions of Kamigawa</item>
+            <item>Unhinged</item>
+            <item>Betrayers of Kamigawa</item>
+            <item>Saviors of Kamigawa</item>
+            <item>Ninth Edition</item>
+            <item>Ravnica: City of Guilds</item>
+            <item>Guildpact</item>
+            <item>Dissension</item>
+            <item>Coldsnap</item>
+            <item>Time Spiral</item>
+            <item>Time Spiral "Timeshifted"</item>
+            <item>Planar Chaos</item>
+            <item>Future Sight</item>
+            <item>Tenth Edition</item>
+            <item>Lorwyn</item>
+            <item>Duel Decks: Elves vs. Goblins</item>
+            <item>Morningtide</item>
+            <item>Shadowmoor</item>
+            <item>Eventide</item>
+            <item>From the Vault: Dragons</item>
+            <item>Shards of Alara</item>
+            <item>Duel Decks: Jace vs. Chandra</item>
+            <item>Conflux</item>
+            <item>Duel Decks: Divine vs. Demonic</item>
+            <item>Alara Reborn</item>
+            <item>Magic 2010</item>
+            <item>From the Vault: Exiled</item>
+            <item>Planechase</item>
+            <item>Zendikar</item>
+            <item>Duel Decks: Garruk vs. Liliana</item>
+            <item>Premium Deck Series: Slivers</item>
+            <item>Worldwake</item>
+            <item>Duel Decks: Phyrexia vs. the Coalition</item>
+            <item>Rise of the Eldrazi</item>
+            <item>Archenemy</item>
+            <item>Magic 2011</item>
+            <item>From the Vault: Relics</item>
+            <item>Duel Decks: Elspeth vs. Tezzeret</item>
+            <item>Scars of Mirrodin</item>
+            <item>Premium Deck Series: Fire &amp; Lightning</item>
+            <item>Mirrodin Besieged</item>
+            <item>Duel Decks: Knights vs. Dragons</item>
+            <item>New Phyrexia</item>
+            <item>Commander</item>
+            <item>Magic 2012</item>
+            <item>From the Vault: Legends</item>
+            <item>Duel Decks: Ajani vs. Nicol Bolas</item>
+            <item>Innistrad</item>
+            <item>Premium Deck Series: Graveborn</item>
+            <item>Dark Ascension</item>
+            <item>Duel Decks: Venser vs. Koth</item>
+            <item>Avacyn Restored</item>
+            <item>Planechase 2012 Edition</item>
+            <item>Magic 2013</item>
+            <item>From the Vault: Realms</item>
+            <item>Duel Decks: Izzet vs. Golgari</item>
+            <item>Return to Ravnica</item>
+            <item>Commander\'s Arsenal</item>
+            <item>Gatecrash</item>
+            <item>Duel Decks: Sorin vs. Tibalt</item>
+            <item>Dragon\'s Maze</item>
+            <item>Modern Masters</item>
+            <item>Magic 2014 Core Set</item>
+            <item>From the Vault: Twenty</item>
+            <item>Duel Decks: Heroes vs. Monsters</item>
+            <item>Theros</item>
+            <item>Commander 2013 Edition</item>
+        </string-array>
+
         <string-array name="sets">
             <item>LEA</item>
             <item>LEB</item>
@@ -41,5 +161,82 @@
             <item>PLS</item>
             <item>7ED</item>
             <item>APC</item>
+            <item>ODY</item>
+            <item>TOR</item>
+            <item>JUD</item>
+            <item>ONS</item>
+            <item>LGN</item>
+            <item>SCG</item>
+            <item>8ED</item>
+            <item>MRD</item>
+            <item>DST</item>
+            <item>5DN</item>
+            <item>CHK</item>
+            <item>UNH</item>
+            <item>BOK</item>
+            <item>SOK</item>
+            <item>9ED</item>
+            <item>RAV</item>
+            <item>GPT</item>
+            <item>DIS</item>
+            <item>CSP</item>
+            <item>TSP</item>
+            <item>TSB</item>
+            <item>PLC</item>
+            <item>FUT</item>
+            <item>10E</item>
+            <item>LRW</item>
+            <item>EVG</item>
+            <item>MOR</item>
+            <item>SHM</item>
+            <item>EVE</item>
+            <item>DRB</item>
+            <item>ALA</item>
+            <item>DD2</item>
+            <item>CON</item>
+            <item>DDC</item>
+            <item>ARB</item>
+            <item>M10</item>
+            <item>V09</item>
+            <item>HOP</item>
+            <item>ZEN</item>
+            <item>DDD</item>
+            <item>H09</item>
+            <item>WWK</item>
+            <item>DDE</item>
+            <item>ROE</item>
+            <item>ARC</item>
+            <item>M11</item>
+            <item>V10</item>
+            <item>DDF</item>
+            <item>SOM</item>
+            <item>PD2</item>
+            <item>MBS</item>
+            <item>DDG</item>
+            <item>NPH</item>
+            <item>CMD</item>
+            <item>M12</item>
+            <item>V11</item>
+            <item>DDH</item>
+            <item>ISD</item>
+            <item>PD3</item>
+            <item>DKA</item>
+            <item>DDI</item>
+            <item>AVR</item>
+            <item>PC2</item>
+            <item>M13</item>
+            <item>V12</item>
+            <item>DDJ</item>
+            <item>RTR</item>
+            <item>CMA</item>
+            <item>GTC</item>
+            <item>DDK</item>
+            <item>DGM</item>
+            <item>MMA</item>
+            <item>M14</item>
+            <item>V13</item>
+            <item>DDL</item>
+            <item>THS</item>
+            <item>C13</item>
         </string-array>
     </resources>

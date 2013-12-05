@@ -48,6 +48,7 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
     Button addSetButton;
     Spinner addSetSpinner;
     String[] cardSet_array;
+    String[] cardSetCode_array;
     ArrayAdapter<String> adapterforStringArray;
 
     @Override
@@ -61,11 +62,12 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
         // spin up a new listView Fragment of cards
         listView_f = new listView_F(cards);
 
-        cardSet_array = getResources().getStringArray(R.array.sets);
+        cardSet_array = getResources().getStringArray(R.array.setNames);
+        cardSetCode_array = getResources().getStringArray(R.array.sets);
         adapterforStringArray = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, cardSet_array);
 
         addSetButton = (Button) findViewById(R.id.filterSetButton);
-        addSetSpinner = (Spinner) findViewById(R.id.filterSetTextView);
+        addSetSpinner = (Spinner) findViewById(R.id.filterSetSpinner);
 
         addSetSpinner.setAdapter(adapterforStringArray);
 
@@ -73,7 +75,8 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                        cards.removeAll(cards);
-                       String set = addSetSpinner.getSelectedItem().toString();
+                       int pos = addSetSpinner.getSelectedItemPosition();
+                       String set = cardSetCode_array[pos];
                        URL = jsonmtg.concat(set).concat(json);
                        ParseCardsFrom(URL);
                 Log.d("d", "onspinnerSelected");
