@@ -15,6 +15,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 import java.util.List;
 
+// The listView_F is a fragment which holds a list. In the application, we used to load the full set of magic cards into it, as well as the deck.
+// In this navigationDrawer implementation, we will not be using this listView_Fragment to load the complete list of magic cards.
 public class listView_F
         extends Fragment
         implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener
