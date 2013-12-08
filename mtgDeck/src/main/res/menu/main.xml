@@ -10,4 +10,8 @@
         android:title="Search Cards"
         android:orderInCategory="100"
         android:showAsAction="never" />
+    <item android:id="@+id/diceRoller"
+        android:title="Dice Roller"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
 </menu>

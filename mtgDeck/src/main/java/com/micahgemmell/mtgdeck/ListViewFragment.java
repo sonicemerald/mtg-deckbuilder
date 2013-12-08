@@ -71,5 +71,6 @@ public class ListViewFragment
         public abstract void addCardToDeck(int position);
 
         public abstract void onCardImageViewUpdate(int paramInt, String calledBy);
+
     }
 }

@@ -15,6 +15,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,13 +24,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import com.loopj.android.http.BinaryHttpResponseHandler;
 
-public class MainActivity extends Activity implements ListViewFragment.OnCardView {
+public class MainActivity extends Activity implements ListViewFragment.OnCardView, DiceRollerFragment.OnDiceRoll {
     public String jsonmtg = "http://mtgjson.com/json/";
     public String json = ".json";
     public String URL = "";
@@ -43,6 +46,7 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
     ListView NavigationDrawer_listView; // used for the "navigation"
     DeckFragment deckView_f;
     CardImageFragment cardView_f;
+    DiceRollerFragment dice;
 
 
     Spinner addSetSpinner; // dropdown list of magic card sets.
@@ -56,6 +60,11 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
     CharSequence mTitle;
     CharSequence mDrawerTitle;
 
+    TextView rollResult;
+
+    //Random number generator
+    long randomSeed = System.currentTimeMillis();
+    Random generator = new Random(randomSeed);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -282,6 +291,30 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
     public void endDealingWithCardImage(){}
 
     public void startNavigationDrawer(){}
+
+    @Override
+    public void diceRoller(int button) {
+        switch(button)
+            {
+                case 10:
+                    int rand = generator.nextInt(9);
+                    rollResult= (TextView) findViewById(R.id.rollResult);
+                    rollResult.setText(String.valueOf(rand+1));
+                    break;
+                case 12:
+                    rand = generator.nextInt(11);
+                    rollResult= (TextView) findViewById(R.id.rollResult);
+                    rollResult.setText(String.valueOf(rand+1));
+                    break;
+                case 20:
+                    rand = generator.nextInt(19);
+                    rollResult= (TextView) findViewById(R.id.rollResult);
+                    rollResult.setText(String.valueOf(rand+1));
+                    break;
+            }
+
+    }
+
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -346,6 +379,14 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
                         .addToBackStack("Search")
                         .commit();
                 return true;
+            case R.id.diceRoller:
+                dice = new DiceRollerFragment();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.container, dice)
+                        .addToBackStack("Dice")
+                        .commit();
+                return true;
+
         }
         return super.onOptionsItemSelected(item);
     }

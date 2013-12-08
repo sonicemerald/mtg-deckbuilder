@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Roll 10"
+        android:paddingRight="36sp"
+        android:paddingLeft="36sp"
+        android:id="@+id/Button10S"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Roll 12"
+        android:paddingRight="35sp"
+        android:paddingLeft="35sp"
+        android:id="@+id/Button12S"
+        android:layout_toRightOf="@+id/Button10S"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="35sp"
+        android:paddingLeft="35sp"
+        android:text="Roll 20"
+        android:id="@+id/Button20S"
+        android:layout_toRightOf="@+id/Button12S"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="0"
+        android:textSize="64sp"
+
+        android:id="@+id/rollResult"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+
+</RelativeLayout>
