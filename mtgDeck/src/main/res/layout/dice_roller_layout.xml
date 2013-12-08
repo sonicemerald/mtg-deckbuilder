@@ -6,26 +6,26 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Roll 10"
-        android:paddingRight="36sp"
-        android:paddingLeft="36sp"
+        android:text="Roll D10"
+        android:paddingRight="30sp"
+        android:paddingLeft="30sp"
         android:id="@+id/Button10S"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Roll 12"
-        android:paddingRight="35sp"
-        android:paddingLeft="35sp"
+        android:text="Roll D12"
+        android:paddingRight="30sp"
+        android:paddingLeft="30sp"
         android:id="@+id/Button12S"
         android:layout_toRightOf="@+id/Button10S"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingRight="35sp"
-        android:paddingLeft="35sp"
-        android:text="Roll 20"
+        android:paddingRight="30sp"
+        android:paddingLeft="28sp"
+        android:text="Roll D20"
         android:id="@+id/Button20S"
         android:layout_toRightOf="@+id/Button12S"/>
 
@@ -33,12 +33,36 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="0"
+        android:text=" "
         android:textSize="64sp"
-
         android:id="@+id/rollResult"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" - "
+        android:id="@+id/loseLifeButton"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" + "
+        android:id="@+id/addLifeButton"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/loseLifeButton" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="  "
+        android:paddingBottom="10sp"
+        android:textSize="24sp"
+        android:id="@+id/livesLeft"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true" />
 
 </RelativeLayout>

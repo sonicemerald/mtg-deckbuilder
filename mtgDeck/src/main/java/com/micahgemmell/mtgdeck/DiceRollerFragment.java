@@ -11,9 +11,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
-// Created by Nick on 12/7/13.
+// Created by Nick Mahnke on 12/7/13.
 
 public class DiceRollerFragment extends Fragment {
 
@@ -22,7 +23,8 @@ public class DiceRollerFragment extends Fragment {
     Button rb10;
     Button rb12;
     Button rb20;
-
+    Button loseLifeButton;
+    Button addLifeButton;
 
     View.OnClickListener rb10Listener = new View.OnClickListener() {
         @Override
@@ -46,7 +48,19 @@ public class DiceRollerFragment extends Fragment {
         }
     };
 
+    View.OnClickListener loseLifeButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mListener.diceRoller(50);
+        }
+    };
 
+    View.OnClickListener addLifeButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mListener.diceRoller(60);
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,14 +68,24 @@ public class DiceRollerFragment extends Fragment {
         this.rb10 = ((Button)localView.findViewById(R.id.Button10S));
         this.rb12 = ((Button)localView.findViewById(R.id.Button12S));
         this.rb20 = ((Button)localView.findViewById(R.id.Button20S));
+        this.loseLifeButton = ((Button)localView.findViewById(R.id.loseLifeButton));
+        this.addLifeButton = ((Button)localView.findViewById(R.id.addLifeButton));
         this.rb10.setOnClickListener(rb10Listener);
         this.rb12.setOnClickListener(rb12Listener);
         this.rb20.setOnClickListener(rb20Listener);
+        this.loseLifeButton.setOnClickListener(loseLifeButtonListener);
+        this.addLifeButton.setOnClickListener(addLifeButtonListener);
         return localView;
     }
 
     public DiceRollerFragment()
     {
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mListener.diceRollerInit();
     }
 
     public void onAttach(Activity paramActivity)
@@ -87,6 +111,8 @@ public class DiceRollerFragment extends Fragment {
     {
 
         public abstract void diceRoller (int button);
+        public abstract void diceRollerInit ();
+
 
 
     }
