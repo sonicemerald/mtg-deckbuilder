@@ -6,6 +6,11 @@
     <string name="action_settings">Settings</string>
 
     <color name="black">#000</color>
+    <color name="blue">#5CD6FF</color>
+    <color name="red">#CC0000</color>
+    <color name="green">#33CC33</color>
+    <color name="gold">#CC9900</color>
+
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>

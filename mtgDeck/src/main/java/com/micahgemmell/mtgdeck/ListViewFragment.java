@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 import java.util.List;
@@ -25,7 +24,6 @@ public class ListViewFragment
     Context context;
     ListView listView;
     OnCardView mListener;
-
 
     public ListViewFragment(List<Card> card)
     {
@@ -73,6 +71,5 @@ public class ListViewFragment
         public abstract void addCardToDeck(int position);
 
         public abstract void onCardImageViewUpdate(int paramInt, String calledBy);
-
     }
 }

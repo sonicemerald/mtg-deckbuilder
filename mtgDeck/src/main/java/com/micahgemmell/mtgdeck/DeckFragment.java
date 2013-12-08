@@ -49,11 +49,10 @@ public class DeckFragment
         return localView;
     }
 
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
+    public void onItemClick(AdapterView<?> paramAdapterView, View paramView, int paramInt, long paramLong)
     {
-
         String calledBy = "deck";
-        this.mListener.onCardImageViewUpdate(position, calledBy);
+        this.mListener.onCardImageViewUpdate(paramInt, calledBy);
     }
 
     public static abstract interface OnCardView
