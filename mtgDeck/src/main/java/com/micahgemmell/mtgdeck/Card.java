@@ -1,9 +1,14 @@
 package com.micahgemmell.mtgdeck;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
+
 public class Card
 {
     public String cardtext = "cardtext";
-    public String color = "color";
+    public ArrayList<String> color;
     public String flavortext = "flavortext";
     public String imageName = "iname";
     public int manacost = 0;
@@ -14,14 +19,20 @@ public class Card
 
     public Card() {}
 
-    public Card(String set, String name, String type, String stype, String color, int paramInt, String cardtext, String flavortext, String imageName)
+    public Card(String set, String name, String type, String stype, ArrayList<String> color, int paramInt, String cardtext, String flavortext, String imageName)
     {
         this.set = set;
         this.name = name;
         this.imageName = imageName;
         this.type = type;
-        this.color = color;
-        this.subtype = stype;
+        //this.color = color;
+        if (this.color != color)
+        {
+        this.color.clear();
+        for (int i =0; i<color.size(); i++)
+            this.color.set(i, color.get(i));
+        }
+            this.subtype = stype;
         this.manacost = paramInt;
         this.cardtext = cardtext;
         this.flavortext = flavortext;
@@ -32,7 +43,7 @@ public class Card
         return this.cardtext;
     }
 
-    public String getColor()
+    public ArrayList<String> getColor()
     {
         return this.color;
     }
@@ -77,9 +88,23 @@ public class Card
         this.cardtext = cardtext;
     }
 
-    public void setColor(String color)
+    public void setColor(JSONArray color)
     {
-        this.color = color;
+        if(this.color != null)
+        this.color.clear();
+        this.color = new ArrayList<String>();
+        if (!color.isNull(0)){
+        for (int i =0; i<color.length(); i++){
+            try {
+               // System.out.println("THIS DIDN'T WORK");
+                this.color.add(color.getString(i));
+                //System.out.println("THIS DIDN'T WORK2");
+            } catch (JSONException e) {
+
+                e.printStackTrace();
+            }
+        }
+        }
     }
 
     public void setFlavortext(String paramString)

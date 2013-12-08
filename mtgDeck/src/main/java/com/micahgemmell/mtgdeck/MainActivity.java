@@ -3,6 +3,7 @@ package com.micahgemmell.mtgdeck;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -10,13 +11,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,14 +25,13 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import com.loopj.android.http.BinaryHttpResponseHandler;
 
-public class MainActivity extends Activity implements ListViewFragment.OnCardView, DiceRollerFragment.OnDiceRoll {
+public class MainActivity extends Activity implements ListViewFragment.OnCardView {
     public String jsonmtg = "http://mtgjson.com/json/";
     public String json = ".json";
     public String URL = "";
@@ -43,11 +43,9 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
     JSONArray jArray;
 
     ListViewFragment listView_f; // not used in navigationDrawer implementation..
-    ListView containerListView;
     ListView NavigationDrawer_listView; // used for the "navigation"
     DeckFragment deckView_f;
     CardImageFragment cardView_f;
-    DiceRollerFragment dice;
 
 
     Spinner addSetSpinner; // dropdown list of magic card sets.
@@ -61,11 +59,6 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
     CharSequence mTitle;
     CharSequence mDrawerTitle;
 
-    TextView rollResult;
-
-    //Random number generator
-    long randomSeed = System.currentTimeMillis();
-    Random generator = new Random(randomSeed);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,10 +74,89 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
 
         //also need to spin up a listView for navDrawer List.
        NavigationDrawer_listView = (ListView) findViewById(R.id.left_drawer);
+       //adapter = new ArrayAdapter<Card>(this, R.layout.drawer_list_item, cards);
+       adapter = new ArrayAdapter<Card>(this, R.layout.list_view_item, cards)
+       {
+           @Override
+           public View getView(int position, View convertView, ViewGroup parent){
+              /* View v = convertView;
+               //if (v == null) {
+                   Context mContext = this.getContext();
+                   LayoutInflater vi = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                   v = vi.inflate(R.layout.list_view_item, null);
+           //    }
+           // v.setRotation(20);
+         TextView tv = (TextView) v.findViewById(R.id.spinnerTarget);
+
+         tv.setTextColor(Color.RED);
+           //    return tv;
+
+               return v;
+
+           }*/
+               View view = super.getView(position, convertView, parent);
+               TextView text = (TextView) view.findViewById(R.id.spinnerTarget);
+               String cardColor = new String();
+               if (this.getItem(position).getColor().size()>0) {
+                   cardColor = this.getItem(position).getColor().get(0);
+               }
+               else {
+                   cardColor = "Other";
+               }
+               /*if (this.getItem(position).getColor().size()>1)
+               {
+                   text.setTextColor(Color.WHITE);
+                   text.setBackgroundColor(getResources().getColor(R.color.gold));
+
+               }*/
+               if (cardColor.equals("Blue"))
+               {
+                   text.setTextColor(Color.WHITE);
+                   text.setBackgroundColor(getResources().getColor(R.color.blue));
+
+               }
+               else if (cardColor.equals("Green"))
+               {
+                   text.setTextColor(Color.WHITE);
+                   text.setBackgroundColor(getResources().getColor(R.color.green));
+
+               }
+               else if (cardColor.equals("White"))
+               {
+
+                   text.setBackgroundColor(Color.WHITE);
+                   text.setTextColor(Color.BLACK);
 
 
-       // adapterforStringArray = new ArrayAdapter<String>(this, R.layout.drawer_list_item, cardSet_array);
-       adapter = new ArrayAdapter<Card>(this, R.layout.drawer_list_item, cards);
+               }
+               else if (cardColor.equals("Black"))
+               {
+
+                   text.setBackgroundColor(Color.BLACK);
+                   text.setTextColor(Color.WHITE);
+
+
+               }
+               else if (cardColor.equals("Red"))
+               {
+
+                   text.setBackgroundColor(getResources().getColor(R.color.red));
+                   text.setTextColor(Color.WHITE);
+
+
+               }
+               else
+               {
+                   text.setTextColor(Color.WHITE);
+                   text.setBackgroundColor(Color.GRAY);
+
+                   System.out.println(cardColor);
+               }
+               return view;
+           }
+
+           };
+
        NavigationDrawer_listView.setAdapter(adapter);
        NavigationDrawer_listView.setOnItemClickListener(new DrawerItemClickListener());
        NavigationDrawer_listView.setOnItemLongClickListener(new DrawerItemLongClickListener());
@@ -118,11 +190,11 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
         addSetSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                       cards.removeAll(cards);
-                       int pos = addSetSpinner.getSelectedItemPosition();
-                       String set = cardSetCode_array[pos];
-                       URL = jsonmtg.concat(set).concat(json);
-                       ParseCardsFrom(URL);
+                cards.removeAll(cards);
+                int pos = addSetSpinner.getSelectedItemPosition();
+                String set = cardSetCode_array[pos];
+                URL = jsonmtg.concat(set).concat(json);
+                ParseCardsFrom(URL);
 
                 /*Log.d("d", "onspinnerSelected");
 
@@ -190,8 +262,13 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
                                 // from the JSON Array
                                  //card.setName(jObject.getString("Set")); // Parse Name from the JSON
                                 // Object, and put into our object
-                                card.setColor(jObject.getString("colors"));
-                                    try{
+                                try{
+                                card.setColor(jObject.getJSONArray("colors"));
+                                }
+                                catch (JSONException e){
+                                    card.setColor(new JSONArray(new String("n")));
+                                }
+                                try{
                                 card.setSubtype(jObject.getString("subtypes"));
                                     } catch (JSONException e) {
                                        card.setSubtype("null");
@@ -295,30 +372,6 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
     public void endDealingWithCardImage(){}
 
     public void startNavigationDrawer(){}
-
-    @Override
-    public void diceRoller(int button) {
-        switch(button)
-            {
-                case 10:
-                    int rand = generator.nextInt(9);
-                    rollResult= (TextView) findViewById(R.id.rollResult);
-                    rollResult.setText(String.valueOf(rand+1));
-                    break;
-                case 12:
-                    rand = generator.nextInt(11);
-                    rollResult= (TextView) findViewById(R.id.rollResult);
-                    rollResult.setText(String.valueOf(rand+1));
-                    break;
-                case 20:
-                    rand = generator.nextInt(19);
-                    rollResult= (TextView) findViewById(R.id.rollResult);
-                    rollResult.setText(String.valueOf(rand+1));
-                    break;
-            }
-
-    }
-
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -383,18 +436,9 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
                         .addToBackStack("Search")
                         .commit();
                 return true;
-            case R.id.diceRoller:
-                dice = new DiceRollerFragment();
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.container, dice)
-                        .addToBackStack("Dice")
-                        .commit();
-                return true;
-
         }
         return super.onOptionsItemSelected(item);
     }
-
 
 
 }
