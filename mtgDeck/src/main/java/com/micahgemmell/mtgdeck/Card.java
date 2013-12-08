@@ -119,6 +119,6 @@ public class Card
 
     public String toString()
     {
-        return this.name + ", " + this.type + ", " + this.subtype + ", " + this.color + ", " + this.manacost + ", " + this.cardtext + "," + this.flavortext + ", ";
+        return this.name;// + ", " + this.type + ", " + this.subtype + ", " + this.color + ", " + this.manacost + ", " + this.cardtext + "," + this.flavortext + ", ";
     }
 }

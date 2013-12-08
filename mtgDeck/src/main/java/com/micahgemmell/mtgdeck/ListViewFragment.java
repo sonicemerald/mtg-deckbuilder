@@ -8,16 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import java.util.List;
 
-// The listView_F is a fragment which holds a list. In the application, we used to load the full set of magic cards into it, as well as the deck.
+// The ListViewFragment is a fragment which holds a list. In the application, we used to load the full set of magic cards into it, as well as the deck.
 // In this navigationDrawer implementation, we will not be using this listView_Fragment to load the complete list of magic cards.
-public class listView_F
+public class ListViewFragment
         extends Fragment
         implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener
 {
@@ -27,7 +25,7 @@ public class listView_F
     ListView listView;
     OnCardView mListener;
 
-    public listView_F(List<Card> card)
+    public ListViewFragment(List<Card> card)
     {
         this.cards = card;
     }
@@ -58,7 +56,7 @@ public class listView_F
     public void onItemClick(AdapterView<?> paramAdapterView, View paramView, int paramInt, long paramLong)
     {
         String calledBy = "set";
-        this.mListener.onCardViewUpdate(paramInt, calledBy);
+        this.mListener.onCardImageViewUpdate(paramInt, calledBy);
     }
 
     public boolean onItemLongClick(AdapterView<?> paramAdapterView, View paramView, int paramInt, long paramLong)
@@ -72,6 +70,6 @@ public class listView_F
     {
         public abstract void addCardToDeck(int position);
 
-        public abstract void onCardViewUpdate(int paramInt, String calledBy);
+        public abstract void onCardImageViewUpdate(int paramInt, String calledBy);
     }
 }

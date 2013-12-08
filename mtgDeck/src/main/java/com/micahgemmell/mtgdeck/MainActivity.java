@@ -4,14 +4,16 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 import org.json.JSONArray;
@@ -26,51 +28,80 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import com.loopj.android.http.BinaryHttpResponseHandler;
 
-public class MainActivity extends Activity implements listView_F.OnCardView {
-    //public String set = "THS";
+public class MainActivity extends Activity implements ListViewFragment.OnCardView {
     public String jsonmtg = "http://mtgjson.com/json/";
     public String json = ".json";
     public String URL = "";
 
-            //.concat(set).concat(".json");
-
     List<Card> deck;
     List<Card> cards;
-    ListView listView;
+
     ArrayAdapter<Card> adapter;
     JSONArray jArray;
-    String tempUrl;
 
-    listView_F listView_f;
-    deckView_F deckView_f;
-    cardView_F cardView_f;
+    ListViewFragment listView_f; // not used in navigationDrawer implementation..
+    ListView NavigationDrawer_listView; // used for the "navigation"
+    DeckFragment deckView_f;
+    CardImageFragment cardView_f;
 
-    Button addSetButton;
-    Spinner addSetSpinner;
-    String[] cardSet_array;
-    String[] cardSetCode_array;
-    ArrayAdapter<String> adapterforStringArray;
+
+    Spinner addSetSpinner; // dropdown list of magic card sets.
+    String[] cardSet_array; // Set Names
+    String[] cardSetCode_array; // Set Codes (used in URL)
+    ArrayAdapter<String> adapterforStringArray; // currently used for the set list
+
+    ActionBarDrawerToggle mDrawerToggle;
+    DrawerLayout mDrawerLayout;
+    RelativeLayout mDrawerRelative;
+    CharSequence mTitle;
+    CharSequence mDrawerTitle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Setup card Container
+        // Setup Card Container
         cards = new ArrayList<Card>();
         deck = new ArrayList<Card>(); // a deck of cards
-        // spin up a new listView Fragment of cards
-        listView_f = new listView_F(cards);
 
+        // spin up a new listView Fragment of cards
+        listView_f = new ListViewFragment(cards);
+
+        //also need to spin up a listView for navDrawer List.
+       NavigationDrawer_listView = (ListView) findViewById(R.id.left_drawer);
+       adapter = new ArrayAdapter<Card>(this, R.layout.drawer_list_item, cards);
+       NavigationDrawer_listView.setAdapter(adapter);
+       NavigationDrawer_listView.setOnItemClickListener(new DrawerItemClickListener());
+       NavigationDrawer_listView.setOnItemLongClickListener(new DrawerItemLongClickListener());
+
+        //setting up for open close drawer
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerRelative = (RelativeLayout) findViewById(R.id.drawer_layout_container);
+
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close){
+
+          public void onDrawerClosed(View view) {
+               getActionBar().setTitle(mTitle);
+               //invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+           }
+
+           public void onDrawerOpened(View drawerView) {
+               getActionBar().setTitle(mDrawerTitle);
+               //invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+           }
+       };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+
+        /* Setting Up the Spinner */
         cardSet_array = getResources().getStringArray(R.array.setNames);
         cardSetCode_array = getResources().getStringArray(R.array.sets);
         adapterforStringArray = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, cardSet_array);
 
-        addSetButton = (Button) findViewById(R.id.filterSetButton);
         addSetSpinner = (Spinner) findViewById(R.id.filterSetSpinner);
-
         addSetSpinner.setAdapter(adapterforStringArray);
-
         addSetSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -79,11 +110,13 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
                        String set = cardSetCode_array[pos];
                        URL = jsonmtg.concat(set).concat(json);
                        ParseCardsFrom(URL);
-                Log.d("d", "onspinnerSelected");
+
+                /*Log.d("d", "onspinnerSelected");
+
                     getFragmentManager().beginTransaction()
                            .detach(listView_f)
                            .attach(listView_f)
-                           .commit();
+                           .commit();*/
             }
 
             @Override
@@ -91,22 +124,7 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
 
             }
         });
-
-        /*
-        addSetButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                set = addSetSpinner.getText().toString();
-                Log.d("b", set.toString());
-                if (set != null && set.length() > 0)
-                   URL = jsonmtg.concat(set).concat(json);
-                    ParseCardsFrom(URL);
-                   // listFragment.addItem(new TodoItem(itemToAdd.toString(), false));
-                addSetSpinner.setText("");
-            }
-        });
-        */
-
+        /* End Setup for the Spinner */
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
@@ -193,9 +211,10 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
 
                         // Add an Item to the Adapter, which will add it to the items List, and
                         // update the List View
-                        listView_f.adapter.add(card);
+                        //NavigationDrawer_listView.getAdapter();
+                           adapter.add(card);
+                        //listView_f.adapter.add(card);
                         //adapter.add(card);
-
 
                                 }
                              } catch (JSONException e) {
@@ -208,29 +227,34 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
             }
 
         }  );
-             /*   listView_f = new listView_F(cards);
+             /*   listView_f = new ListViewFragment(cards);
                 getFragmentManager().beginTransaction()
                     .replace(R.id.container, listView_f)
                     .commit();*/
     }
-
-
-
     @Override
-    public void onCardViewUpdate(int position, String calledBy){
+    public  void addCardToDeck(int position){
+        Card card = cards.get(position);
+        deck.add(card);
+        Log.d("card", "added ".concat(card.getName().toString()));
+        //Toast.makeText(context, "added ".concat(cards.get(position).getName()), Toast.LENGTH_SHORT);
+    }
+    public void startDealingWithCardImage(){}
+    @Override
+    public void onCardImageViewUpdate(int position, String calledBy){
         String image;
         String set;
         String imageURL;
         if(calledBy == "deck")// == "deck")
         {
-            cardView_f = new cardView_F(deck.get(position));
+            cardView_f = new CardImageFragment(deck.get(position));
             image = deck.get(position).getImageName();
             set = deck.get(position).getSet();
             imageURL = "http://mtgimage.com/set/".concat(set).concat("/").concat(image).concat(".jpg");
             Log.d("tag", imageURL);
             getCardImageFrom(imageURL);
         } else if (calledBy == "set"){
-            cardView_f = new cardView_F(cards.get(position));
+            cardView_f = new CardImageFragment(cards.get(position));
             image = cards.get(position).getImageName();
             set = cards.get(position).getSet();
             imageURL = "http://mtgimage.com/set/".concat(set).concat("/").concat(image).concat(".jpg");
@@ -255,23 +279,45 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
               }
             });
         }
+    public void endDealingWithCardImage(){}
 
-  /* @Override
-   public void onListViewUpdate(String URL){
-       listView_f = new listView_F()
-       getFragmentManager().beginTransaction()
-               .replace(R.id.container, listView_f)
-               .addToBackStack("CardView Back")
-               .commit();
-    } */
-
-    @Override
-    public  void addCardToDeck(int position){
-        Card card = cards.get(position);
-        deck.add(card);
-        Log.d("card", "added ".concat(card.getName().toString()));
-        //Toast.makeText(context, "added ".concat(cards.get(position).getName()), Toast.LENGTH_SHORT);
+    public void startNavigationDrawer(){}
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            selectItem(position);
+        }
     }
+    private class DrawerItemLongClickListener implements ListView.OnItemLongClickListener{
+        @Override
+        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id){
+            addCardToDeck(position);
+            return true;
+        }
+    }
+
+    private void selectItem(int position){
+        // update the main content by replacing fragments
+        cardView_f = new CardImageFragment(cards.get(position));
+        String image = cards.get(position).getImageName();
+        String set = cards.get(position).getSet();
+        String imageURL = "http://mtgimage.com/set/".concat(set).concat("/").concat(image).concat(".jpg");
+        Log.d("tag", imageURL);
+        getCardImageFrom(imageURL);
+
+        getFragmentManager().beginTransaction()
+                .replace(R.id.container, cardView_f)
+                .commit();
+
+        mDrawerLayout.closeDrawer(mDrawerRelative);
+
+
+        /*/ update selected item and title, then close the drawer
+        mDrawerList.setItemChecked(position, true);
+        setTitle(mPlanetTitles[position]);
+        mDrawerLayout.closeDrawer(mDrawerList);
+       */ }
+    public void endNavigationDrawer(){}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -288,12 +334,12 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.myDeck:
-                     deckView_f = new deckView_F(deck);
-                    getFragmentManager().beginTransaction()
-                            .replace(R.id.container, deckView_f)
-                            .addToBackStack("Your Deck")
-                            .commit();
-             return true;
+                deckView_f = new DeckFragment(deck);
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.container, deckView_f)
+                        .addToBackStack("Your Deck")
+                        .commit();
+                return true;
             case R.id.searchCards:
                 getFragmentManager().beginTransaction()
                         .replace(R.id.container, listView_f)
@@ -304,4 +350,6 @@ public class MainActivity extends Activity implements listView_F.OnCardView {
         return super.onOptionsItemSelected(item);
     }
 
+
 }
+
