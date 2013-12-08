@@ -51,6 +51,7 @@ public class DeckFragment
 
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
     {
+
         String calledBy = "deck";
         this.mListener.onCardImageViewUpdate(position, calledBy);
     }
