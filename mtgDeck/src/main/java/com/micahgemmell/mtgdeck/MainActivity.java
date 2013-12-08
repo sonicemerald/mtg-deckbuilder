@@ -25,13 +25,15 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import com.loopj.android.http.BinaryHttpResponseHandler;
 
-public class MainActivity extends Activity implements ListViewFragment.OnCardView {
+public class MainActivity extends Activity implements ListViewFragment.OnCardView, DiceRollerFragment.OnDiceRoll {
+    DiceRollerFragment dice;
     public String jsonmtg = "http://mtgjson.com/json/";
     public String json = ".json";
     public String URL = "";
@@ -58,6 +60,15 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
     RelativeLayout mDrawerRelative;
     CharSequence mTitle;
     CharSequence mDrawerTitle;
+
+    // Constants for diceroller & lifeviewer
+    TextView rollResult;
+    TextView livesLeft;
+    int lives = 20;
+
+    //Random number generator
+    long randomSeed = System.currentTimeMillis();
+    Random generator = new Random(randomSeed);
 
 
     @Override
@@ -371,6 +382,45 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
         }
     public void endDealingWithCardImage(){}
 
+    @Override
+    public void diceRoller(int button) {
+        switch(button)
+        {
+            case 10:
+                int rand = generator.nextInt(9);
+                rollResult= (TextView) findViewById(R.id.rollResult);
+                rollResult.setText(String.valueOf(rand+1));
+                break;
+            case 12:
+                rand = generator.nextInt(11);
+                rollResult= (TextView) findViewById(R.id.rollResult);
+                rollResult.setText(String.valueOf(rand+1));
+                break;
+            case 20:
+                rand = generator.nextInt(19);
+                rollResult= (TextView) findViewById(R.id.rollResult);
+                rollResult.setText(String.valueOf(rand+1));
+                break;
+            case 50: //Lost Life Button
+                livesLeft = (TextView) findViewById(R.id.livesLeft);
+                lives--;
+                livesLeft.setText("Life Total: " + String.valueOf(lives));
+                break;
+            case 60: //Add Life Button
+                livesLeft = (TextView) findViewById(R.id.livesLeft);
+                lives++;
+                livesLeft.setText("Life Total: " + String.valueOf(lives));
+                break;
+        }
+
+    }
+
+    @Override
+    public void diceRollerInit() {
+        livesLeft = (TextView) findViewById(R.id.livesLeft);
+        livesLeft.setText("Life Total: " + String.valueOf(lives));
+    }
+
     public void startNavigationDrawer(){}
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
@@ -434,6 +484,13 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
                 getFragmentManager().beginTransaction()
                         .replace(R.id.container, listView_f)
                         .addToBackStack("Search")
+                        .commit();
+                return true;
+            case R.id.diceRoller:
+                dice = new DiceRollerFragment();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.container, dice)
+                        .addToBackStack("Dice")
                         .commit();
                 return true;
         }
