@@ -40,6 +40,7 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
     JSONArray jArray;
 
     ListViewFragment listView_f; // not used in navigationDrawer implementation..
+    ListView containerListView;
     ListView NavigationDrawer_listView; // used for the "navigation"
     DeckFragment deckView_f;
     CardImageFragment cardView_f;
@@ -71,6 +72,9 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
 
         //also need to spin up a listView for navDrawer List.
        NavigationDrawer_listView = (ListView) findViewById(R.id.left_drawer);
+
+
+       // adapterforStringArray = new ArrayAdapter<String>(this, R.layout.drawer_list_item, cardSet_array);
        adapter = new ArrayAdapter<Card>(this, R.layout.drawer_list_item, cards);
        NavigationDrawer_listView.setAdapter(adapter);
        NavigationDrawer_listView.setOnItemClickListener(new DrawerItemClickListener());
@@ -349,6 +353,7 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
         }
         return super.onOptionsItemSelected(item);
     }
+
 
 
 }
