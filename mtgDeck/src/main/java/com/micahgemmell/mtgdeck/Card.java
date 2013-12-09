@@ -16,10 +16,11 @@ public class Card
     public String set = "set";
     public String subtype = "stype";
     public String type = "type";
+    public String rarity = "rarity";
 
     public Card() {}
 
-    public Card(String set, String name, String type, String stype, ArrayList<String> color, int paramInt, String cardtext, String flavortext, String imageName)
+    public Card(String set, String name, String type, String stype, ArrayList<String> color, int paramInt, String cardtext, String flavortext, String imageName, String rarity)
     {
         this.set = set;
         this.name = name;
@@ -36,6 +37,8 @@ public class Card
         this.manacost = paramInt;
         this.cardtext = cardtext;
         this.flavortext = flavortext;
+        this.rarity = rarity;
+
     }
 
     public String getCardtext()
@@ -146,4 +149,14 @@ public class Card
     {
         return this.name;// + ", " + this.type + ", " + this.subtype + ", " + this.color + ", " + this.manacost + ", " + this.cardtext + "," + this.flavortext + ", ";
     }
+
+    public String getRarity() {
+        return rarity;
+    }
+
+    public void setRarity(String rarity) {
+        this.rarity = rarity;
+    }
+
+
 }

@@ -46,17 +46,18 @@ public class ListViewFragment
     {
         View localView = paramLayoutInflater.inflate(R.layout.fragment_main, paramViewGroup, false);
         this.listView = ((ListView)localView.findViewById(R.id.listView));
-        this.adapter = new ArrayAdapter(this.context, android.R.layout.simple_list_item_1, this.cards);
+        this.adapter = new CardListAdapter(this.context, R.layout.card_list_row, cards);
         this.listView.setAdapter(this.adapter);
         this.listView.setOnItemClickListener(this);
         this.listView.setOnItemLongClickListener(this);
         return localView;
     }
 
-    public void onItemClick(AdapterView<?> paramAdapterView, View paramView, int paramInt, long paramLong)
+    public void onItemClick(AdapterView<?> paramAdapterView, View paramView, int position, long paramLong)
     {
         String calledBy = "set";
-        this.mListener.onCardImageViewUpdate(paramInt, calledBy);
+        this.mListener.onCardImageViewUpdate(position, calledBy);
+        //this.mListener.showCardInfo(position);
     }
 
     public boolean onItemLongClick(AdapterView<?> paramAdapterView, View paramView, int paramInt, long paramLong)
@@ -69,7 +70,7 @@ public class ListViewFragment
     public static abstract interface OnCardView
     {
         public abstract void addCardToDeck(int position);
-
         public abstract void onCardImageViewUpdate(int paramInt, String calledBy);
+        public abstract void showCardInfo(int position);
     }
 }

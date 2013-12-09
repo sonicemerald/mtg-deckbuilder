@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:id="@+id/CardListRow"
+    style="@style/nowCardStyle">
+
+<!--Card Name-->
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/cardName_tv"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:singleLine="true"
+        android:textColor="@color/black"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/manaCost_tv"
+        android:layout_alignTop="@+id/raritytextView"
+        android:layout_toLeftOf="@+id/raritytextView" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:padding="16dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text=""
+        android:shadowColor="@color/white"
+        android:shadowRadius="2"
+        android:id="@+id/rarity_tv"
+
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true" />
+    <FrameLayout
+        android:id="@+id/cardInfoContainer"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_alignBottom="@id/cardName_tv"
+        />
+
+
+</RelativeLayout>

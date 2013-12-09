@@ -43,7 +43,8 @@ public class DeckFragment
     {
         View localView = paramLayoutInflater.inflate(R.layout.fragment_main, paramViewGroup, false);
         this.listView = ((ListView)localView.findViewById(R.id.listView));
-        this.adapter = new ArrayAdapter(this.context, android.R.layout.simple_list_item_1, this.deck);
+        this.adapter = new CardListAdapter(this.context, R.layout.card_list_row, deck);
+        //this.adapter = new ArrayAdapter(this.context, android.R.layout.simple_list_item_1, this.deck);
         this.listView.setAdapter(this.adapter);
         this.listView.setOnItemClickListener(this);
         return localView;

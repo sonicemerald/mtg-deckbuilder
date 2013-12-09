@@ -46,6 +46,7 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
 
     ListViewFragment listView_f; // not used in navigationDrawer implementation..
     ListView NavigationDrawer_listView; // used for the "navigation"
+    ListView container_listView;
     DeckFragment deckView_f;
     CardImageFragment cardView_f;
 
@@ -55,11 +56,13 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
     String[] cardSetCode_array; // Set Codes (used in URL)
     ArrayAdapter<String> adapterforStringArray; // currently used for the set list
 
+    //Navigation Drawer
     ActionBarDrawerToggle mDrawerToggle;
     DrawerLayout mDrawerLayout;
     RelativeLayout mDrawerRelative;
     CharSequence mTitle;
     CharSequence mDrawerTitle;
+    String[] navMenuItems;
 
     // Constants for diceroller & lifeviewer
     TextView rollResult;
@@ -75,102 +78,28 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         // Setup Card Container
         cards = new ArrayList<Card>();
         deck = new ArrayList<Card>(); // a deck of cards
 
         // spin up a new listView Fragment of cards
         listView_f = new ListViewFragment(cards);
+        if (savedInstanceState == null) {
+            getFragmentManager().beginTransaction()
+                    .add(R.id.container, listView_f)
+                    .addToBackStack("main")
+                    .commit();
+        }
+
 
         //also need to spin up a listView for navDrawer List.
-       NavigationDrawer_listView = (ListView) findViewById(R.id.left_drawer);
-       //adapter = new ArrayAdapter<Card>(this, R.layout.drawer_list_item, cards);
-       adapter = new ArrayAdapter<Card>(this, R.layout.list_view_item, cards)
-       {
-           @Override
-           public View getView(int position, View convertView, ViewGroup parent){
-              /* View v = convertView;
-               //if (v == null) {
-                   Context mContext = this.getContext();
-                   LayoutInflater vi = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                   v = vi.inflate(R.layout.list_view_item, null);
-           //    }
-           // v.setRotation(20);
-         TextView tv = (TextView) v.findViewById(R.id.spinnerTarget);
-
-         tv.setTextColor(Color.RED);
-           //    return tv;
-
-               return v;
-
-           }*/
-               View view = super.getView(position, convertView, parent);
-               TextView text = (TextView) view.findViewById(R.id.spinnerTarget);
-               String cardColor = new String();
-               if (this.getItem(position).getColor().size()>0) {
-                   cardColor = this.getItem(position).getColor().get(0);
-               }
-               else {
-                   cardColor = "Other";
-               }
-               /*if (this.getItem(position).getColor().size()>1)
-               {
-                   text.setTextColor(Color.WHITE);
-                   text.setBackgroundColor(getResources().getColor(R.color.gold));
-
-               }*/
-               if (cardColor.equals("Blue"))
-               {
-                   text.setTextColor(Color.WHITE);
-                   text.setBackgroundColor(getResources().getColor(R.color.blue));
-
-               }
-               else if (cardColor.equals("Green"))
-               {
-                   text.setTextColor(Color.WHITE);
-                   text.setBackgroundColor(getResources().getColor(R.color.green));
-
-               }
-               else if (cardColor.equals("White"))
-               {
-
-                   text.setBackgroundColor(Color.WHITE);
-                   text.setTextColor(Color.BLACK);
-
-
-               }
-               else if (cardColor.equals("Black"))
-               {
-
-                   text.setBackgroundColor(Color.BLACK);
-                   text.setTextColor(Color.WHITE);
-
-
-               }
-               else if (cardColor.equals("Red"))
-               {
-
-                   text.setBackgroundColor(getResources().getColor(R.color.red));
-                   text.setTextColor(Color.WHITE);
-
-
-               }
-               else
-               {
-                   text.setTextColor(Color.WHITE);
-                   text.setBackgroundColor(Color.GRAY);
-
-                   System.out.println(cardColor);
-               }
-               return view;
-           }
-
-           };
-
-       NavigationDrawer_listView.setAdapter(adapter);
+       NavigationDrawer_listView = (ListView) findViewById(R.id.left_drawer); //Find where we want to put the list
+       navMenuItems = getResources().getStringArray(R.array.nav_drawer_items); // Get the Array of items.
+       adapterforStringArray = new ArrayAdapter<String>(this, R.layout.drawer_list_item, navMenuItems); // need to adapt the array of items
+       //Now set the adapter.
+       NavigationDrawer_listView.setAdapter(adapterforStringArray);
        NavigationDrawer_listView.setOnItemClickListener(new DrawerItemClickListener());
-       NavigationDrawer_listView.setOnItemLongClickListener(new DrawerItemLongClickListener());
+//       NavigationDrawer_listView.setOnItemLongClickListener(new DrawerItemLongClickListener());
 
         //setting up for open close drawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -182,20 +111,28 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
                getActionBar().setTitle(mTitle);
                //invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
            }
-
-           public void onDrawerOpened(View drawerView) {
+          public void onDrawerOpened(View drawerView) {
                getActionBar().setTitle(mDrawerTitle);
                //invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
            }
        };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+    };
 
-        /* Setting Up the Spinner */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        container_listView = (ListView) findViewById(R.id.listView);
+        adapter = new CardListAdapter(this, R.layout.card_list_row, cards);
+        container_listView.setAdapter(adapter);
+        container_listView.setOnItemClickListener(new DrawerItemClickListener());
+        container_listView.setOnItemLongClickListener(new DrawerItemLongClickListener());
+
+                /* Setting Up the Spinner */
         cardSet_array = getResources().getStringArray(R.array.setNames);
         cardSetCode_array = getResources().getStringArray(R.array.sets);
         adapterforStringArray = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, cardSet_array);
-
         addSetSpinner = (Spinner) findViewById(R.id.filterSetSpinner);
         addSetSpinner.setAdapter(adapterforStringArray);
         addSetSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -222,12 +159,7 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
         });
         /* End Setup for the Spinner */
 
-        if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction()
-                    .add(R.id.container, listView_f)
-                    .commit();
-        }
-    };
+    }
 
 
     public void ParseCardsFrom(String URL){
@@ -286,6 +218,7 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
                                     }
                                 card.setName(jObject.getString("name")); // Parse Name from the JSON
                                 card.setType(jObject.getString("type")); // Do the same for type
+                                card.setRarity(jObject.getString("rarity"));
                                     try{
                                 card.setManacost(jObject.getInt("cmc"));
                                     } catch (JSONException e) {
@@ -368,6 +301,16 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
                     .commit();
         }
 
+    @Override
+    public void showCardInfo(int position) {
+        //cardInforFragment = new CardImageFragment();
+/*        getFragmentManager().beginTransaction()
+                .detach(cardView_f)
+                .attach(cardView_f)
+                .commit();
+                */
+    }
+
     public void getCardImageFrom(String imageURL){
             AsyncHttpClient client = new AsyncHttpClient();
             String[] allowedContentTypes = new String[] { "image/jpeg" };
@@ -438,16 +381,29 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
 
     private void selectItem(int position){
         // update the main content by replacing fragments
-        cardView_f = new CardImageFragment(cards.get(position));
-        String image = cards.get(position).getImageName();
-        String set = cards.get(position).getSet();
-        String imageURL = "http://mtgimage.com/set/".concat(set).concat("/").concat(image).concat(".jpg");
-        Log.d("tag", imageURL);
-        getCardImageFrom(imageURL);
+        switch (position){
+            case 0: // first item - "search cards"
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.container, listView_f)
+                        .addToBackStack("Search")
+                        .commit();
+                break;
+            case 1: //second item - decks
+                deckView_f = new DeckFragment(deck);
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.container, deckView_f)
+                        .addToBackStack("Your Deck")
+                        .commit();
+                break;
+            case 2: // third item - life/dice counter
+                dice = new DiceRollerFragment();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.container, dice)
+                        .addToBackStack("Dice")
+                        .commit();
+                break;
 
-        getFragmentManager().beginTransaction()
-                .replace(R.id.container, cardView_f)
-                .commit();
+        }
 
         mDrawerLayout.closeDrawer(mDrawerRelative);
 

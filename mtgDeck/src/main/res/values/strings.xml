@@ -7,10 +7,12 @@
 
     <color name="black">#000</color>
     <color name="blue">#5CD6FF</color>
-    <color name="red">#CC0000</color>
-    <color name="green">#33CC33</color>
+    <color name="red">#ffcc625b</color>
+    <color name="green">#ff85d386</color>
     <color name="gold">#CC9900</color>
-
+    <color name="orangered">#FF4500</color>
+    <color name="silver">#C0C0C0</color>
+    <color name="white">#fff</color>
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
