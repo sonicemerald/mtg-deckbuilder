@@ -4,6 +4,7 @@
     <string name="app_name">MTG Deck Viewer</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="search_hint">Search for name or color</string>
 
     <color name="black">#000</color>
     <color name="blue">#5CD6FF</color>
@@ -26,8 +27,9 @@
 
     <!-- Nav Drawer List Item Icons -->
     <!-- Keep them in order as the titles are in -->
-    <!--Will require CustomListView Adapter-->
-    <array name="nav_drawer_icons">
-    </array>
+    <!-- Will require CustomListView Adapter -->
+    <array name="nav_drawer_icons"></array>
+
+    <string name="title_activity_search_results">SearchResultsActivity</string>
 
 </resources>

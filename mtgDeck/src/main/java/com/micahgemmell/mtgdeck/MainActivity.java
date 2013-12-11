@@ -1,6 +1,8 @@
 package com.micahgemmell.mtgdeck;
 
 import android.app.Activity;
+import android.app.SearchManager;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -16,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -38,8 +41,8 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
     public String json = ".json";
     public String URL = "";
 
-    List<Card> deck;
-    List<Card> cards;
+    static List<Card> deck;
+    static List<Card> cards;
 
     ArrayAdapter<Card> adapter;
     JSONArray jArray;
@@ -127,7 +130,7 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
         adapter = new CardListAdapter(this, R.layout.card_list_row, cards);
         container_listView.setAdapter(adapter);
         container_listView.setOnItemClickListener(new DrawerItemClickListener());
-        container_listView.setOnItemLongClickListener(new DrawerItemLongClickListener());
+
 
                 /* Setting Up the Spinner */
         cardSet_array = getResources().getStringArray(R.array.setNames);
@@ -142,9 +145,10 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
                 int pos = addSetSpinner.getSelectedItemPosition();
                 String set = cardSetCode_array[pos];
                 URL = jsonmtg.concat(set).concat(json);
+
                 ParseCardsFrom(URL);
 
-                /*Log.d("d", "onspinnerSelected");
+                /*Log.d("d", "onspinnerSelected")
 
                     getFragmentManager().beginTransaction()
                            .detach(listView_f)
@@ -365,19 +369,13 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
     }
 
     public void startNavigationDrawer(){}
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+    protected class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             selectItem(position);
         }
     }
-    private class DrawerItemLongClickListener implements ListView.OnItemLongClickListener{
-        @Override
-        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id){
-            addCardToDeck(position);
-            return true;
-        }
-    }
+
 
     private void selectItem(int position){
         // update the main content by replacing fragments
@@ -420,6 +418,15 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
 
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+
         return true;
     }
 
@@ -452,7 +459,10 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
         }
         return super.onOptionsItemSelected(item);
     }
-
+    public static List<Card> getCards()
+    {
+        return cards;
+    }
 
 }
 
