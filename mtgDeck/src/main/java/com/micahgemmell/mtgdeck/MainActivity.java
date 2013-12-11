@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -271,7 +272,7 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
         Card card = cards.get(position);
         deck.add(card);
         Log.d("card", "added ".concat(card.getName().toString()));
-        //Toast.makeText(context, "added ".concat(cards.get(position).getName()), Toast.LENGTH_SHORT);
+        Toast.makeText(this, "added ".concat(cards.get(position).getName()), Toast.LENGTH_SHORT).show();
     }
     public void startDealingWithCardImage(){}
     @Override

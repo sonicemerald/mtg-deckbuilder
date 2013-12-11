@@ -7,16 +7,23 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import com.haarman.listviewanimations.itemmanipulation.OnDismissCallback;
+import com.haarman.listviewanimations.itemmanipulation.SwipeDismissAdapter;
+
 import java.util.List;
 
 public class DeckFragment
         extends Fragment
-        implements AdapterView.OnItemClickListener
-{
+        implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
     ArrayAdapter<Card> adapter;
+    SwipeDismissAdapter sAdapter;
     Context context;
     List<Card> deck;
     ListView listView;
@@ -47,6 +54,21 @@ public class DeckFragment
         //this.adapter = new ArrayAdapter(this.context, android.R.layout.simple_list_item_1, this.deck);
         this.listView.setAdapter(this.adapter);
         this.listView.setOnItemClickListener(this);
+        this.listView.setOnItemLongClickListener(this);
+
+        OnDismissCallback oDC = new OnDismissCallback() {
+            @Override
+            public void onDismiss(AbsListView absListView, int[] ints) {
+                for (int position : ints) {
+                    adapter.remove(deck.get(position));
+                    Toast.makeText(context, "Deleted ".concat(deck.get(position).getName()), Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+        // Somewhere in your adapter creation code
+        sAdapter = new SwipeDismissAdapter(adapter, oDC);
+        sAdapter.setAbsListView(listView);
+        listView.setAdapter(sAdapter);
         return localView;
     }
 
@@ -54,6 +76,13 @@ public class DeckFragment
     {
         String calledBy = "deck";
         this.mListener.onCardImageViewUpdate(paramInt, calledBy);
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        this.adapter.remove(deck.get(position));
+        Toast.makeText(this.context, "Deleted ".concat(deck.get(position).getName()), Toast.LENGTH_SHORT).show();
+        return true;
     }
 
     public static abstract interface OnCardView

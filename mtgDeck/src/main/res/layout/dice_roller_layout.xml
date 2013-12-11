@@ -23,11 +23,11 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingRight="30sp"
-        android:paddingLeft="28sp"
         android:text="Roll D20"
         android:id="@+id/Button20S"
-        android:layout_toRightOf="@+id/Button12S"/>
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/Button12S"
+        android:layout_alignParentRight="true" />
 
     <TextView
         android:layout_width="wrap_content"
