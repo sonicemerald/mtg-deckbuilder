@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CardListAdapter extends ArrayAdapter<Card> {
@@ -76,18 +77,33 @@ public class CardListAdapter extends ArrayAdapter<Card> {
 
         switch(rarity.charAt(0)){
             case 'C': //common - black
+                textRarity.setText("C");
+                textRarity.setTextColor(parent.getResources().getColor(R.color.gold));
                 textRarity.setBackgroundColor(parent.getResources().getColor(R.color.black));
                 break;
             case 'U': //uncommon - silver
+                textRarity.setText("U");
+                textRarity.setTextColor(parent.getResources().getColor(R.color.black));
                 textRarity.setBackgroundColor(parent.getResources().getColor(R.color.silver));
                 break;
             case 'R':
+                textRarity.setText("R");
+                textRarity.setTextColor(parent.getResources().getColor(R.color.black));
                 textRarity.setBackgroundColor(parent.getResources().getColor(R.color.gold));
                 break;
             case 'M':
+                textRarity.setText("MR");
+                textRarity.setTextColor(parent.getResources().getColor(R.color.silver));
                 textRarity.setBackgroundColor(parent.getResources().getColor(R.color.orangered));
                break;
         }
+
+        String type = card.getType();
+
+
+            TextView subtypeText = (TextView) view.findViewById(R.id.subtype_tv);
+            subtypeText.setText(type);
+
         return view;
     }
 

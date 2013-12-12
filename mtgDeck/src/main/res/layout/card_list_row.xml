@@ -12,10 +12,22 @@
         android:layout_height="fill_parent"
         android:singleLine="true"
         android:textColor="@color/black"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:gravity="center_vertical"
-        android:padding="16dp"
+        android:paddingLeft="15dp"
+        android:paddingTop="15dp"
+        android:paddingRight="15dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/subtype_tv"
+        android:paddingLeft="16dp"
+        android:layout_below="@id/cardName_tv"
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -28,8 +40,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:padding="16dp"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:padding="15dp"
         android:text=""
         android:shadowColor="@color/white"
         android:shadowRadius="2"

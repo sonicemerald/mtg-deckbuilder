@@ -58,7 +58,6 @@ public class SearchResultsActivity extends Activity implements ListViewFragment.
         if (savedInstanceState == null) {
         getFragmentManager().beginTransaction()
                 .add(R.id.finalSearch, listView_f)
-                .addToBackStack("search")
                 .commit();
         }
 
@@ -71,6 +70,7 @@ public class SearchResultsActivity extends Activity implements ListViewFragment.
         SearchResults = new ArrayList<Card>();
 
         cQuery = new String(query);
+
         if (cQuery.length()>1)
             cQuery = cQuery.substring(0,1).toUpperCase() + cQuery.substring(1);
         else
@@ -134,6 +134,15 @@ public class SearchResultsActivity extends Activity implements ListViewFragment.
                 .addToBackStack("CardView Back")
                 .commit();
     }
+
+    @Override
+    public void spinnerItemSelected(int position) {
+         /*MainActivity.cards.removeAll(cards);
+         String set = MainActivity.cardSetCode_array[position];
+         String URL = jsonmtg.corncat(set).concat(json);
+        ParseCardsFrom(URL);*/
+    }
+
     public void getCardImageFrom(String imageURL){
         AsyncHttpClient client = new AsyncHttpClient();
         String[] allowedContentTypes = new String[] { "image/jpeg" };

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 import java.util.List;
 
@@ -17,13 +18,16 @@ import java.util.List;
 // In this navigationDrawer implementation, we will not be using this listView_Fragment to load the complete list of magic cards.
 public class ListViewFragment
         extends Fragment
-        implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener
-{
+        implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, AdapterView.OnItemSelectedListener {
     ArrayAdapter<Card> adapter;
     List<Card> cards;
     Context context;
     ListView listView;
     OnCardView mListener;
+    OnCardView sListener;
+    private Spinner addSetSpinner;
+    private String[] cardSet_array;
+    ArrayAdapter<String> adapterforStringArray;
 
     public ListViewFragment(List<Card> card)
     {
@@ -37,6 +41,7 @@ public class ListViewFragment
         if ((paramActivity instanceof OnCardView))
         {
             this.mListener = ((OnCardView)paramActivity);
+            this.sListener = ((OnCardView)paramActivity);
             return;
         }
         throw new ClassCastException(paramActivity.toString() + " is lame!");
@@ -45,6 +50,12 @@ public class ListViewFragment
     public View onCreateView(LayoutInflater paramLayoutInflater, ViewGroup paramViewGroup, Bundle paramBundle)
     {
         View localView = paramLayoutInflater.inflate(R.layout.fragment_main, paramViewGroup, false);
+        this.addSetSpinner = (Spinner) localView.findViewById(R.id.filterSetSpinner);
+        cardSet_array = getResources().getStringArray(R.array.setNames);
+        //cardSetCode_array = getResources().getStringArray(R.array.sets);
+        adapterforStringArray = new ArrayAdapter<String>(this.context, android.R.layout.simple_list_item_1, cardSet_array);
+        this.addSetSpinner.setAdapter(adapterforStringArray);
+        this.addSetSpinner.setOnItemSelectedListener(this);
         this.listView = ((ListView)localView.findViewById(R.id.listView));
         this.adapter = new CardListAdapter(this.context, R.layout.card_list_row, cards);
         this.listView.setAdapter(this.adapter);
@@ -67,10 +78,21 @@ public class ListViewFragment
         return true;
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        this.sListener.spinnerItemSelected(position);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
     public static abstract interface OnCardView
     {
         public abstract void addCardToDeck(int position);
         public abstract void onCardImageViewUpdate(int paramInt, String calledBy);
+        public abstract void spinnerItemSelected(int position);
         public abstract void showCardInfo(int position);
     }
 }

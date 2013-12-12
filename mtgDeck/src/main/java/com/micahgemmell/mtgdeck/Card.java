@@ -15,6 +15,7 @@ public class Card
     public String name = "name";
     public String set = "set";
     public String subtype = "stype";
+   //public ArrayList<String> subtype;
     public String type = "type";
     public String rarity = "rarity";
 
@@ -33,7 +34,14 @@ public class Card
         for (int i =0; i<color.size(); i++)
             this.color.set(i, color.get(i));
         }
-            this.subtype = stype;
+
+        this.subtype = stype;
+/*        if (this.subtype != stype){
+            this.subtype.clear();
+            for(int i =0; i < stype.size(); i++)
+                this.subtype.set(i, stype.get(i));
+        }*/
+
         this.manacost = paramInt;
         this.cardtext = cardtext;
         this.flavortext = flavortext;
@@ -91,6 +99,27 @@ public class Card
         this.cardtext = cardtext;
     }
 
+    public void setSubtype(String stype)
+    {
+        this.subtype = stype;
+        /*
+        if(this.subtype != null)
+            this.subtype.clear();
+        this.subtype = new ArrayList<String>();
+        if (!stype.isNull(0)){
+            for (int i =0; i<stype.length(); i++){
+                try {
+                    // System.out.println("THIS DIDN'T WORK");
+                    this.subtype.add(stype.getString(i));
+                    //System.out.println("THIS DIDN'T WORK2");
+                } catch (JSONException e) {
+
+                    e.printStackTrace();
+                }
+            }
+        }*/
+    }
+
     public void setColor(JSONArray color)
     {
         if(this.color != null)
@@ -135,10 +164,7 @@ public class Card
         this.set = paramString;
     }
 
-    public void setSubtype(String paramString)
-    {
-        this.subtype = paramString;
-    }
+
 
     public void setType(String paramString)
     {

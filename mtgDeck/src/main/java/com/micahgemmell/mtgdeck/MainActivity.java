@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,6 +51,7 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
 
     ListViewFragment listView_f; // not used in navigationDrawer implementation..
     ListView NavigationDrawer_listView; // used for the "navigation"
+    //ListViewFragment container_listView;
     ListView container_listView;
     DeckFragment deckView_f;
     CardImageFragment cardView_f;
@@ -85,9 +87,12 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
         // Setup Card Container
         cards = new ArrayList<Card>();
         deck = new ArrayList<Card>(); // a deck of cards
+        cardSetCode_array = getResources().getStringArray(R.array.sets);
 
-        // spin up a new listView Fragment of cards
+        adapter = new CardListAdapter(this, R.layout.card_list_row, cards);
         listView_f = new ListViewFragment(cards);
+
+
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
                     .add(R.id.container, listView_f)
@@ -112,7 +117,7 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close){
 
           public void onDrawerClosed(View view) {
-               getActionBar().setTitle(mTitle);
+               getActionBar().setTitle(R.string.app_name);
                //invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
            }
           public void onDrawerOpened(View drawerView) {
@@ -121,19 +126,22 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
            }
        };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+        //getActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer);
 
-    };
+    }
 
     @Override
     protected void onStart() {
         super.onStart();
-        container_listView = (ListView) findViewById(R.id.listView);
-        adapter = new CardListAdapter(this, R.layout.card_list_row, cards);
-        container_listView.setAdapter(adapter);
-        container_listView.setOnItemClickListener(new DrawerItemClickListener());
 
+     //   container_listView = (ListView) findViewById(R.id.listView);
+      // adapter = new CardListAdapter(this, R.layout.card_list_row, cards);
+   /*     container_listView.setAdapter(adapter);
+        container_listView.setOnItemClickListener(new DrawerItemClickListener());*/
 
-                /* Setting Up the Spinner */
+                /* Setting Up the Spinner
         cardSet_array = getResources().getStringArray(R.array.setNames);
         cardSetCode_array = getResources().getStringArray(R.array.sets);
         adapterforStringArray = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, cardSet_array);
@@ -155,17 +163,36 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
                            .detach(listView_f)
                            .attach(listView_f)
                            .commit();*/
-            }
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
+//        /* End Setup for the Spinner */
+/*
+        adapter = new CardListAdapter(this, R.layout.card_list_row, cards);
+        listView_f = new ListViewFragment(cards);
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+        getFragmentManager().beginTransaction()
+                .replace(R.id.container, listView_f)
+                .addToBackStack("main")
+                .commit();
+  */  }
 
-            }
-        });
-        /* End Setup for the Spinner */
-
+    @Override
+    public void spinnerItemSelected(int position) {
+        cards.removeAll(cards);
+        String set = cardSetCode_array[position];
+        URL = jsonmtg.concat(set).concat(json);
+        ParseCardsFrom(URL);
+        /*
+        getFragmentManager().beginTransaction()
+                           .detach(listView_f)
+                           .attach(listView_f)
+                           .commit();*/
     }
-
 
     public void ParseCardsFrom(String URL){
         // Setup Listview for cards (now done in fragment)
@@ -216,11 +243,16 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
                                 catch (JSONException e){
                                     card.setColor(new JSONArray(new String("n")));
                                 }
-                                try{
+                                    try{
                                 card.setSubtype(jObject.getString("subtypes"));
                                     } catch (JSONException e) {
-                                       card.setSubtype("null");
+                                        card.setSubtype("null");
                                     }
+                                        /*
+                                        jObject.getJSONArray("subtypes"));
+                                    } catch (JSONException e) {
+                                       card.setSubtype(new JSONArray(new String("null")));
+                                    }*/
                                 card.setName(jObject.getString("name")); // Parse Name from the JSON
                                 card.setType(jObject.getString("type")); // Do the same for type
                                 card.setRarity(jObject.getString("rarity"));
@@ -251,7 +283,7 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
                         // Add an Item to the Adapter, which will add it to the items List, and
                         // update the List View
                         //NavigationDrawer_listView.getAdapter();
-                           adapter.add(card);
+                           listView_f.adapter.add(card);
                         //listView_f.adapter.add(card);
                         //adapter.add(card);
 
@@ -266,10 +298,6 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
             }
 
         }  );
-             /*   listView_f = new ListViewFragment(cards);
-                getFragmentManager().beginTransaction()
-                    .replace(R.id.container, listView_f)
-                    .commit();*/
     }
     @Override
     public  void addCardToDeck(int position){
@@ -305,6 +333,8 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
                     .addToBackStack("CardView Back")
                     .commit();
         }
+
+
 
     @Override
     public void showCardInfo(int position) {
@@ -436,6 +466,9 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
         switch (item.getItemId()) {
             case R.id.myDeck:
                 deckView_f = new DeckFragment(deck);
