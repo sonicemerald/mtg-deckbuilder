@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
@@ -29,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -45,11 +47,13 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
 
     static List<Card> deck;
     static List<Card> cards;
+    static List<Card> Rarity;
 
     ArrayAdapter<Card> adapter;
     JSONArray jArray;
 
-    ListViewFragment listView_f; // not used in navigationDrawer implementation..
+    ListViewFragment listView_f;
+    public ListViewFragment listView_R;
     ListView NavigationDrawer_listView; // used for the "navigation"
     //ListViewFragment container_listView;
     ListView container_listView;
@@ -78,6 +82,7 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
     //Random number generator
     long randomSeed = System.currentTimeMillis();
     Random generator = new Random(randomSeed);
+    private ArrayList<Card> AllCards;
 
 
     @Override
@@ -85,8 +90,11 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         // Setup Card Container
+        AllCards = new ArrayList<Card>();
         cards = new ArrayList<Card>();
         deck = new ArrayList<Card>(); // a deck of cards
+        Rarity = new ArrayList<Card>();
+
         cardSetCode_array = getResources().getStringArray(R.array.sets);
 
         adapter = new CardListAdapter(this, R.layout.card_list_row, cards);
@@ -108,7 +116,7 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
        //Now set the adapter.
        NavigationDrawer_listView.setAdapter(adapterforStringArray);
        NavigationDrawer_listView.setOnItemClickListener(new DrawerItemClickListener());
-//       NavigationDrawer_listView.setOnItemLongClickListener(new DrawerItemLongClickListener());
+//   NavigationDrawer_listView.setOnItemLongClickListener(new DrawerItemLongClickListener());
 
         //setting up for open close drawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -128,70 +136,70 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
-        //getActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer);
 
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-
-     //   container_listView = (ListView) findViewById(R.id.listView);
-      // adapter = new CardListAdapter(this, R.layout.card_list_row, cards);
-   /*     container_listView.setAdapter(adapter);
-        container_listView.setOnItemClickListener(new DrawerItemClickListener());*/
-
-                /* Setting Up the Spinner
-        cardSet_array = getResources().getStringArray(R.array.setNames);
-        cardSetCode_array = getResources().getStringArray(R.array.sets);
-        adapterforStringArray = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, cardSet_array);
-        addSetSpinner = (Spinner) findViewById(R.id.filterSetSpinner);
-        addSetSpinner.setAdapter(adapterforStringArray);
-        addSetSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                cards.removeAll(cards);
-                int pos = addSetSpinner.getSelectedItemPosition();
-                String set = cardSetCode_array[pos];
+    public void spinnerItemSelected(int position, int id) {
+        switch(id){
+            case R.id.filterSetSpinner: //set
+                cards.clear();
+                AllCards.clear();
+                String set = cardSetCode_array[position];
                 URL = jsonmtg.concat(set).concat(json);
-
                 ParseCardsFrom(URL);
+                break;
+            case R.id.sortRaritySpinner: //rarity
+               //  listView_R = new ListViewFragment(Rarity);
+                String rarity = null;
+                switch(position){
+                    case 0:
+                        ArrayList<Card> card = AllCards;
+                        listView_f.adapter.clear();
+                        listView_f.adapter.addAll(card);
+                        listView_f.refresh();
+                        break;
+                    case 1: // common
+                        rarity = "Common";
+                        setRarityAdapter(rarity);
+                        break;
+                    case 2: // uncommon
+                        rarity = "Uncommon";
+                        setRarityAdapter(rarity);
+                        break;
+                    case 3: // rare
+                        rarity = "Rare";
+                        setRarityAdapter(rarity);
+                        break;
+                    case 4: //mythic rare
+                        rarity ="Mythic Rare";
+                        setRarityAdapter(rarity);
+                        break;
+                    default: break;
+                  }
+                break;
+            default: break;
+                }
 
-                /*Log.d("d", "onspinnerSelected")
+                }
+    private void setRarityAdapter(String rarity){
 
-                    getFragmentManager().beginTransaction()
-                           .detach(listView_f)
-                           .attach(listView_f)
-                           .commit();*/
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//
-//            }
-//        });
-//        /* End Setup for the Spinner */
-/*
-        adapter = new CardListAdapter(this, R.layout.card_list_row, cards);
-        listView_f = new ListViewFragment(cards);
+        if(Rarity != null){
+            Rarity.clear();
+        }
+        for (int i = 0, cardsSize = AllCards.size(); i < cardsSize; i++) {
+            Log.d("card", String.valueOf(cardsSize));
+            Card card = AllCards.get(i);
 
-        getFragmentManager().beginTransaction()
-                .replace(R.id.container, listView_f)
-                .addToBackStack("main")
-                .commit();
-  */  }
+            if (card.getRarity().equals(rarity)){
+                    Rarity.add(card);
+            }
+        }
+        listView_f.adapter.clear();
+        listView_f.adapter.addAll(Rarity);
+        listView_f.refresh();
 
-    @Override
-    public void spinnerItemSelected(int position) {
-        cards.removeAll(cards);
-        String set = cardSetCode_array[position];
-        URL = jsonmtg.concat(set).concat(json);
-        ParseCardsFrom(URL);
-        /*
-        getFragmentManager().beginTransaction()
-                           .detach(listView_f)
-                           .attach(listView_f)
-                           .commit();*/
+        Log.d("adapter size", String.valueOf(listView_f.adapter.getCount()));
     }
 
     public void ParseCardsFrom(String URL){
@@ -263,6 +271,10 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
                                     }
 
                                 card.setImageName(jObject.getString("imageName"));
+
+
+                                        // Do something with the List, such as put it in a Member Object for later
+
                                 //card.setSet(jObject.getString("set"));
 
                         // Remember there are other items in the JSON Object, and they are of other
@@ -284,6 +296,7 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
                         // update the List View
                         //NavigationDrawer_listView.getAdapter();
                            listView_f.adapter.add(card);
+                                 AllCards.add(card);
                         //listView_f.adapter.add(card);
                         //adapter.add(card);
 
@@ -306,7 +319,7 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
         Log.d("card", "added ".concat(card.getName().toString()));
         Toast.makeText(this, "added ".concat(cards.get(position).getName()), Toast.LENGTH_SHORT).show();
     }
-    public void startDealingWithCardImage(){}
+    private void STARTDealingWithCardImage(){}
     @Override
     public void onCardImageViewUpdate(int position, String calledBy){
         String image;
@@ -334,8 +347,6 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
                     .commit();
         }
 
-
-
     @Override
     public void showCardInfo(int position) {
         //cardInforFragment = new CardImageFragment();
@@ -358,7 +369,7 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
               }
             });
         }
-    public void endDealingWithCardImage(){}
+    private void ENDDealingWithCardImage(){}
 
     @Override
     public void diceRoller(int button) {
@@ -399,14 +410,13 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
         livesLeft.setText("Life Total: " + String.valueOf(lives));
     }
 
-    public void startNavigationDrawer(){}
+    private void STARTNavigationDrawer(){}
     protected class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             selectItem(position);
         }
     }
-
 
     private void selectItem(int position){
         // update the main content by replacing fragments
@@ -442,7 +452,7 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
         setTitle(mPlanetTitles[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
        */ }
-    public void endNavigationDrawer(){}
+    private void ENDNavigationDrawer(){}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

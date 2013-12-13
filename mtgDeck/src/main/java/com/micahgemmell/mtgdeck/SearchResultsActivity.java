@@ -136,7 +136,8 @@ public class SearchResultsActivity extends Activity implements ListViewFragment.
     }
 
     @Override
-    public void spinnerItemSelected(int position) {
+    public void spinnerItemSelected(int position, int id) {
+
          /*MainActivity.cards.removeAll(cards);
          String set = MainActivity.cardSetCode_array[position];
          String URL = jsonmtg.corncat(set).concat(json);

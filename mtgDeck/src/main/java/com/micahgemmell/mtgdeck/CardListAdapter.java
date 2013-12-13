@@ -69,7 +69,6 @@ public class CardListAdapter extends ArrayAdapter<Card> {
         } else {
             text.setTextColor(Color.WHITE);
             text.setBackgroundColor(Color.GRAY);
-            System.out.println(cardColor);
         }
 
         String rarity = card.getRarity();

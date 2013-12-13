@@ -30,6 +30,16 @@
     <!-- Will require CustomListView Adapter -->
     <array name="nav_drawer_icons"></array>
 
+    <!--Search-->
     <string name="title_activity_search_results">SearchResultsActivity</string>
+
+    <!--Rarity Spinner -->
+    <string-array name="rarity">
+        <item>All</item>
+        <item>Common</item>
+        <item>Uncommon</item>
+        <item>Rare</item>
+        <item>Mythic Rare</item>
+    </string-array>
 
 </resources>

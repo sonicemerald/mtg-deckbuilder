@@ -25,37 +25,53 @@ public class ListViewFragment
     ListView listView;
     OnCardView mListener;
     OnCardView sListener;
-    private Spinner addSetSpinner;
+    private Spinner sortSetSpinner;
     private String[] cardSet_array;
-    ArrayAdapter<String> adapterforStringArray;
+    private Spinner sortRaritySpinner;
+    private String[] rarity_array;
+
+    ArrayAdapter<String> adapterforSetArray;
+    ArrayAdapter<String> adapterforRarityArray;
+    public int spinnerposition;
 
     public ListViewFragment(List<Card> card)
     {
         this.cards = card;
     }
 
-    public void onAttach(Activity paramActivity)
+    public void onAttach(Activity activity)
     {
-        super.onAttach(paramActivity);
-        this.context = paramActivity;
-        if ((paramActivity instanceof OnCardView))
+        super.onAttach(activity);
+        this.context = activity;
+        if ((activity instanceof OnCardView))
         {
-            this.mListener = ((OnCardView)paramActivity);
-            this.sListener = ((OnCardView)paramActivity);
+            this.mListener = ((OnCardView)activity);
+            this.sListener = ((OnCardView)activity);
             return;
         }
-        throw new ClassCastException(paramActivity.toString() + " is lame!");
+        throw new ClassCastException(activity.toString() + " is lame!");
     }
 
     public View onCreateView(LayoutInflater paramLayoutInflater, ViewGroup paramViewGroup, Bundle paramBundle)
     {
         View localView = paramLayoutInflater.inflate(R.layout.fragment_main, paramViewGroup, false);
-        this.addSetSpinner = (Spinner) localView.findViewById(R.id.filterSetSpinner);
+        this.sortSetSpinner = (Spinner) localView.findViewById(R.id.filterSetSpinner);
         cardSet_array = getResources().getStringArray(R.array.setNames);
         //cardSetCode_array = getResources().getStringArray(R.array.sets);
-        adapterforStringArray = new ArrayAdapter<String>(this.context, android.R.layout.simple_list_item_1, cardSet_array);
-        this.addSetSpinner.setAdapter(adapterforStringArray);
-        this.addSetSpinner.setOnItemSelectedListener(this);
+        adapterforSetArray = new ArrayAdapter<String>(this.context, android.R.layout.simple_list_item_1, cardSet_array);
+        this.sortSetSpinner.setAdapter(adapterforSetArray);
+        this.sortSetSpinner.setOnItemSelectedListener(this);
+        int initialposition = (adapterforSetArray.getCount()-1);
+        if(spinnerposition != initialposition) { spinnerposition = initialposition; }
+        this.sortSetSpinner.setSelection(spinnerposition);
+
+        this.sortRaritySpinner = (Spinner) localView.findViewById(R.id.sortRaritySpinner);
+        rarity_array = getResources().getStringArray(R.array.rarity);
+        //cardSetCode_array = getResources().getStringArray(R.array.sets);
+        adapterforRarityArray = new ArrayAdapter<String>(this.context, android.R.layout.simple_list_item_1, rarity_array);
+        this.sortRaritySpinner.setAdapter(adapterforRarityArray);
+        this.sortRaritySpinner.setOnItemSelectedListener(this);
+
         this.listView = ((ListView)localView.findViewById(R.id.listView));
         this.adapter = new CardListAdapter(this.context, R.layout.card_list_row, cards);
         this.listView.setAdapter(this.adapter);
@@ -80,7 +96,8 @@ public class ListViewFragment
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        this.sListener.spinnerItemSelected(position);
+        spinnerposition = position;
+            this.sListener.spinnerItemSelected(position, parent.getId());
     }
 
     @Override
@@ -88,11 +105,15 @@ public class ListViewFragment
 
     }
 
+    public void refresh(){
+        this.listView.invalidateViews();
+    }
+
     public static abstract interface OnCardView
     {
         public abstract void addCardToDeck(int position);
         public abstract void onCardImageViewUpdate(int paramInt, String calledBy);
-        public abstract void spinnerItemSelected(int position);
+        public abstract void spinnerItemSelected(int position, int id);
         public abstract void showCardInfo(int position);
     }
 }
