@@ -6,19 +6,4 @@
         android:icon= "@android:drawable/ic_menu_search"
         android:showAsAction="collapseActionView|ifRoom"
         android:actionViewClass="android.widget.SearchView" />
-
-    <item android:id="@+id/myDeck"
-        android:title="View your deck"
-        android:orderInCategory="100"
-        android:showAsAction="never" />
-
-    <item android:id="@+id/searchCards"
-        android:title="Search Cards"
-        android:orderInCategory="100"
-        android:showAsAction="never" />
-
-    <item android:id="@+id/diceRoller"
-        android:title="Dice Roller"
-        android:orderInCategory="100"
-        android:showAsAction="never" />
 </menu>

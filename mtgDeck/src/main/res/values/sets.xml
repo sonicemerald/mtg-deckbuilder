@@ -118,6 +118,7 @@
             <item>Duel Decks: Heroes vs. Monsters</item>
             <item>Theros</item>
             <item>Commander 2013 Edition</item>
+            <item>Select a Set</item>
         </string-array>
 
         <string-array name="sets">
@@ -238,5 +239,6 @@
             <item>DDL</item>
             <item>THS</item>
             <item>C13</item>
+            <item>SET</item>
         </string-array>
     </resources>

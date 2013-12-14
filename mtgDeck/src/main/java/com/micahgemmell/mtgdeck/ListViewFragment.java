@@ -32,7 +32,8 @@ public class ListViewFragment
 
     ArrayAdapter<String> adapterforSetArray;
     ArrayAdapter<String> adapterforRarityArray;
-    public int spinnerposition;
+   // public int spinnerposition;
+    private AdapterView.OnItemSelectedListener listener;
 
     public ListViewFragment(List<Card> card)
     {
@@ -60,10 +61,19 @@ public class ListViewFragment
         //cardSetCode_array = getResources().getStringArray(R.array.sets);
         adapterforSetArray = new ArrayAdapter<String>(this.context, android.R.layout.simple_list_item_1, cardSet_array);
         this.sortSetSpinner.setAdapter(adapterforSetArray);
-        this.sortSetSpinner.setOnItemSelectedListener(this);
-        int initialposition = (adapterforSetArray.getCount()-1);
-        if(spinnerposition != initialposition) { spinnerposition = initialposition; }
-        this.sortSetSpinner.setSelection(spinnerposition);
+        listener = this;
+        this.sortSetSpinner.post(new Runnable() {
+            public void run() {
+                sortSetSpinner.setOnItemSelectedListener(listener);
+                int initialposition = (adapterforSetArray.getCount()-1);
+                int spinnerposition = mListener.getSpinnerPosition();
+                //if(mListener.getSpinnerPosition() = initialposition) { spinnerposition = initialposition; }
+                sortSetSpinner.setSelection(spinnerposition);
+            }
+        });
+
+        //this.sortSetSpinner.setOnItemSelectedListener(this);
+
 
         this.sortRaritySpinner = (Spinner) localView.findViewById(R.id.sortRaritySpinner);
         rarity_array = getResources().getStringArray(R.array.rarity);
@@ -82,21 +92,24 @@ public class ListViewFragment
 
     public void onItemClick(AdapterView<?> paramAdapterView, View paramView, int position, long paramLong)
     {
-        String calledBy = "set";
-        this.mListener.onCardImageViewUpdate(position, calledBy);
+        if(!(cards.get(0).getImageName().equals("Null"))){
+            String calledBy = "set";
+            this.mListener.onCardImageViewUpdate(position, calledBy);
+        }
         //this.mListener.showCardInfo(position);
     }
 
     public boolean onItemLongClick(AdapterView<?> paramAdapterView, View paramView, int paramInt, long paramLong)
     {
-        this.mListener.addCardToDeck(paramInt);
+        if(!(cards.get(0).getImageName().equals("Null"))){
+            this.mListener.addCardToDeck(paramInt);
         Toast.makeText(this.context, "added ".concat(((Card)this.cards.get(paramInt)).getName()), 0);
+        }
         return true;
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        spinnerposition = position;
             this.sListener.spinnerItemSelected(position, parent.getId());
     }
 
@@ -114,6 +127,7 @@ public class ListViewFragment
         public abstract void addCardToDeck(int position);
         public abstract void onCardImageViewUpdate(int paramInt, String calledBy);
         public abstract void spinnerItemSelected(int position, int id);
+        public abstract int getSpinnerPosition();
         public abstract void showCardInfo(int position);
     }
 }

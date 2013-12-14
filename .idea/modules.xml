@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MTGdeckviewer.iml" filepath="$PROJECT_DIR$/MTGdeckviewer.iml" />
       <module fileurl="file://$PROJECT_DIR$/cs360-android-app.iml" filepath="$PROJECT_DIR$/cs360-android-app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/cs360-android-app.iml" filepath="$PROJECT_DIR$/cs360-android-app.iml" />
       <module fileurl="file://$PROJECT_DIR$/mtgDeck/mtgDeck.iml" filepath="$PROJECT_DIR$/mtgDeck/mtgDeck.iml" />
     </modules>
   </component>
