@@ -12,6 +12,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.micahgemmell.mtgdeck.Card.Card;
+
 import java.util.List;
 
 // The ListViewFragment is a fragment which holds a list. In the application, we used to load the full set of magic cards into it, as well as the deck.

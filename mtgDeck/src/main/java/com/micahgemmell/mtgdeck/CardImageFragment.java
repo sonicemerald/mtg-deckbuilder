@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.micahgemmell.mtgdeck.Card.Card;
+
 public class CardImageFragment
         extends Fragment
 {

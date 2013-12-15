@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.haarman.listviewanimations.itemmanipulation.OnDismissCallback;
 import com.haarman.listviewanimations.itemmanipulation.SwipeDismissAdapter;
+import com.micahgemmell.mtgdeck.Card.Card;
 
 import org.json.JSONArray;
 import org.json.JSONException;

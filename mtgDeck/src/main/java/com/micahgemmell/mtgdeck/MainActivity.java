@@ -1,31 +1,22 @@
 package com.micahgemmell.mtgdeck;
 
+import com.micahgemmell.mtgdeck.Card.Card;
+import com.micahgemmell.mtgdeck.Card.*;
 import android.app.Activity;
 import android.app.SearchManager;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.inputmethodservice.KeyboardView;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Filter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
@@ -38,10 +29,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
-import java.util.prefs.AbstractPreferences;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -66,7 +55,7 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
 
     ListViewFragment listView_f;
     String listview_tag = "listviewFragment";
-    ListView NavigationDrawer_listView; // used for the "navigation"
+
     //ListViewFragment container_listView;
     ListView container_listView;
     DeckFragment deckView_f;
@@ -80,10 +69,13 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
     ArrayAdapter<String> adapterforStringArray; // currently used for the set list
 
     //Navigation Drawer
+    ListView NavigationDrawer_listView_Left; // used for the "navigation"
+    ListView NavigationDrawer_listView_Right; // used for sort
     ActionBarDrawerToggle mDrawerToggle;
     DrawerLayout mDrawerLayout;
     DrawerItemClickListener dListener;
-    RelativeLayout mDrawerRelative;
+    RelativeLayout mDrawerRelativeLeft;
+    RelativeLayout mDrawerRelativeRight;
     CharSequence mDrawerTitle = "Menu";
     String[] navMenuItems;
 
@@ -98,6 +90,16 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
     private String query;
     private String cQuery;
     private SharedPreferences sharedPrefs;
+    private ArrayList<Creature> creatures;
+    private ArrayList<Enchantment> enchantments;
+    private ArrayList<Instant> instants;
+    private ArrayList<Sorcery> sorcerys;
+    private ArrayList<Land> lands;
+    private ArrayList<Artifact> artifacts;
+    private ArrayList<Planeswalker> planeswalkers;
+    private String[] SortingItems;
+    private ArrayAdapter<String> adapterforStringArray1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +115,13 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
         deck = new ArrayList<Card>();
         Rarity = new ArrayList<Card>();
         SearchResults = new ArrayList<Card>();
+        creatures = new ArrayList<Creature>();
+        enchantments = new ArrayList<Enchantment>();
+        instants = new ArrayList<Instant>();
+        sorcerys = new ArrayList<Sorcery>();
+        lands = new ArrayList<Land>();
+        artifacts = new ArrayList<Artifact>();
+        planeswalkers = new ArrayList<Planeswalker>();
 
         cardSetCode_array = getResources().getStringArray(R.array.sets);
 
@@ -124,19 +133,30 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
                     .add(R.id.container, listView_f, listview_tag)
                     .commit();
         }
+        dListener = new DrawerItemClickListener();
 
-        //also need to spin up a listView for navDrawer List.
-       NavigationDrawer_listView = (ListView) findViewById(R.id.left_drawer); //Find where we want to put the list
+        //also need to spin up a listView for navDrawer List. Left SIDE
+       NavigationDrawer_listView_Left = (ListView) findViewById(R.id.left_drawer); //Find where we want to put the list
        navMenuItems = getResources().getStringArray(R.array.nav_drawer_items); // Get the Array of items.
-       adapterforStringArray = new ArrayAdapter<String>(this, R.layout.drawer_list_item, navMenuItems); // need to adapt the array of items
+       adapterforStringArray1 = new ArrayAdapter<String>(this, R.layout.drawer_list_item, navMenuItems); // need to adapt the array of items
        //Now set the adapter.
-       NavigationDrawer_listView.setAdapter(adapterforStringArray);
-       NavigationDrawer_listView.setOnItemClickListener(dListener = new DrawerItemClickListener());
-//   NavigationDrawer_listView.setOnItemLongClickListener(new DrawerItemLongClickListener());
+       NavigationDrawer_listView_Left.setAdapter(adapterforStringArray1);
+       NavigationDrawer_listView_Left.setOnItemClickListener(dListener);
+//   NavigationDrawer_listView_Left.setOnItemLongClickListener(new DrawerItemLongClickListener());
+
+        //Right Side Setup
+        NavigationDrawer_listView_Right = (ListView) findViewById(R.id.right_drawer); //Find where we want to put the list
+        SortingItems = getResources().getStringArray(R.array.nav_drawer_sorting_items); // Get the Array of items.
+        adapterforStringArray = new ArrayAdapter<String>(this, R.layout.drawer_list_item, SortingItems); // need to adapt the array of items
+        //Now set the adapter.
+        NavigationDrawer_listView_Right.setAdapter(adapterforStringArray);
+        NavigationDrawer_listView_Right.setOnItemClickListener(dListener);
+
 
         //setting up for open close drawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerRelative = (RelativeLayout) findViewById(R.id.drawer_layout_container);
+        mDrawerRelativeLeft = (RelativeLayout) findViewById(R.id.drawer_layout_container_left);
+        mDrawerRelativeRight = (RelativeLayout) findViewById(R.id.drawer_layout_container_right);
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close){
 
@@ -243,9 +263,11 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
                 adapter.clear();
                 AllCards.clear();
                 ParseCardsFrom(URL);
-                if(query != null){
-                performSearch(query); }
-                Log.d("allcards", String.valueOf(AllCards.size()));
+
+//                String squery = sharedPrefs.getString("query", "null");
+//                if(!(squery.equals("null"))) {
+//                performSearch(squery); }
+//
                 break;
             case R.id.sortRaritySpinner: //rarity
                //  listView_R = new ListViewFragment(Rarity);
@@ -342,62 +364,81 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
                                 // from the JSON Array
                                  //card.setName(jObject.getString("Set")); // Parse Name from the JSON
                                 // Object, and put into our object
-                                try{
-                                card.setColor(jObject.getJSONArray("colors"));
-                                }
-                                catch (JSONException e){
-                                    card.setColor(new JSONArray(new String("n")));
-                                }
-                                    try{
-                                card.setSubtype(jObject.getString("subtypes"));
+                                    try{ card.setTypes(jObject.getJSONArray("types"));
+                                    } catch (JSONException e){
+                                        card.setTypes(new JSONArray("types"));
+                                    }
+
+
+                                    try{ card.setColor(jObject.getJSONArray("colors")); }
+                                    catch (JSONException e){
+                                        card.setColor(new JSONArray(new String("n")));
+                                    }
+                                    try{ card.setSubtype(jObject.getString("subtypes"));
                                     } catch (JSONException e) {
                                         card.setSubtype("null");
                                     }
-                                        /*
-                                        jObject.getJSONArray("subtypes"));
-                                    } catch (JSONException e) {
-                                       card.setSubtype(new JSONArray(new String("null")));
-                                    }*/
-                                card.setName(jObject.getString("name")); // Parse Name from the JSON
-                                card.setType(jObject.getString("type")); // Do the same for type
-                                card.setRarity(jObject.getString("rarity"));
+                                    card.setName(jObject.getString("name")); // Parse Name from the JSON
+                                    card.setType(jObject.getString("type")); // Do the same for type
+                                    card.setRarity(jObject.getString("rarity"));
                                     try{
-                                card.setManacost(jObject.getInt("cmc"));
+                                        card.setManacost(jObject.getInt("cmc"));
                                     } catch (JSONException e) {
                                         card.setManacost(0);
                                     }
+                                    card.setImageName(jObject.getString("imageName"));
+                                    Log.d("c", card.getTypes().toString());
 
-                                card.setImageName(jObject.getString("imageName"));
+                                        if(card.getTypes().contains("Creature")){
+                                            Creature creature = new Creature();
+                                            card.Clone(creature);
+                                            creature.setPower(jObject.getString("power"));
+                                            creature.setToughness(jObject.getString("toughness"));
+                                            creatures.add(creature);
+                                            listView_f.adapter.add(creature);
+                                            AllCards.add(creature);
+                                    }
+                                    else if(card.getTypes().contains("Enchantment")){
+                                            Enchantment enchantment = new Enchantment();
+                                            card.Clone(enchantment);
+                                            enchantments.add(enchantment);
+                                            listView_f.adapter.add(enchantment);
+                                            AllCards.add(enchantment);
+                                        } else if (card.getTypes().contains("Instant")){
+                                            Instant instant = new Instant();
+                                            card.Clone(instant);
+                                            instants.add(instant);
+                                            listView_f.adapter.add(instant);
+                                            AllCards.add(instant);
+                                        } else if (card.getTypes().contains("Sorcery")){
 
-
-                                        // Do something with the List, such as put it in a Member Object for later
-
-                                //card.setSet(jObject.getString("set"));
-
-                        // Remember there are other items in the JSON Object, and they are of other
-                        // Types, so you might want to switch based on type and create an object
-                        // such as a Book, Periodical, or Member
-
-                        // For Reference to get the Checked out Array of a Member to a List
-
-                        /*
-                        if (card.getType().equals("Member") && jObject.has("Checked_out")) {
-                            List<String> checkedOut = new ArrayList<String>();
-                            JSONArray checkedOutArray = jObject.getJSONArray("Checked_out");
-                            for (int j = 0; j < checkedOutArray.length(); ++j)
-                                checkedOut.add(checkedOutArray.getString(i));
-                            // Do something with the List, such as put it in a Member Object for later
-                        }*/
-
-                        // Add an Item to the Adapter, which will add it to the items List, and
-                        // update the List View
-                        //NavigationDrawer_listView.getAdapter();
-                           listView_f.adapter.add(card);
-                           AllCards.add(card);
-
-
-                        //listView_f.adapter.add(card);
-                        //adapter.add(card);
+                                            Sorcery sorcery = new Sorcery();
+                                            card.Clone(sorcery);
+                                            sorcerys.add(sorcery);
+                                            listView_f.adapter.add(sorcery);
+                                            AllCards.add(sorcery);
+                                        } else if (card.getTypes().contains("Artifact")){
+                                            Artifact artifact = new Artifact();
+                                            card.Clone(artifact);
+                                            artifacts.add(artifact);
+                                            listView_f.adapter.add(artifact);
+                                            AllCards.add(artifact);
+                                        } else if (card.getTypes().contains("Land")){
+                                            Land land = new Land();
+                                            card.Clone(land);
+                                            lands.add(land);
+                                            listView_f.adapter.add(land);
+                                            AllCards.add(land);
+                                        } else if (card.getTypes().contains("Planeswalker")){
+                                            Planeswalker planeswalker = new Planeswalker();
+                                            card.Clone(planeswalker);
+                                            planeswalkers.add(planeswalker);
+                                            listView_f.adapter.add(planeswalker);
+                                            AllCards.add(planeswalker);
+                                        } else {
+                                        listView_f.adapter.add(card);
+                                        AllCards.add(card);
+                                    }
 
                                 }
                              } catch (JSONException e) {
@@ -511,8 +552,65 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
     protected class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            selectItem(position);
+            switch(parent.getId()){
+                case (R.id.left_drawer):
+                    selectItem(position);
+                case (R.id.right_drawer):
+                    sortItems(position);
+                default:
+                    break;
+            }
+
+
         }
+    }
+
+    private void sortItems(int position) {
+        switch (position){
+            case 0: //all
+                listView_f.adapter.clear();
+                listView_f.adapter.addAll(AllCards);
+                listView_f.refresh();
+                break;
+            case 1: //
+                listView_f.adapter.clear();
+                listView_f.adapter.addAll(planeswalkers);
+                listView_f.refresh();
+                break;
+            case 2: //
+                listView_f.adapter.clear();
+                listView_f.adapter.addAll(creatures);
+                listView_f.refresh();
+                break;
+            case 3:
+                listView_f.adapter.clear();
+                listView_f.adapter.addAll(artifacts);
+                listView_f.refresh();
+                break;
+            case 4:
+                listView_f.adapter.clear();
+                listView_f.adapter.addAll(enchantments);
+                listView_f.refresh();
+                break;
+            case 5:
+                listView_f.adapter.clear();
+                listView_f.adapter.addAll(sorcerys);
+                listView_f.refresh();
+                break;
+            case 6:
+                listView_f.adapter.clear();
+                listView_f.adapter.addAll(instants);
+                listView_f.refresh();
+                break;
+            case 7:
+                listView_f.adapter.clear();
+                listView_f.adapter.addAll(lands);
+                listView_f.refresh();
+                break;
+            default:
+                break;
+        }
+            mDrawerLayout.closeDrawer(mDrawerRelativeRight);
     }
 
     private void selectItem(int position){
@@ -538,10 +636,11 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
                         .addToBackStack("Dice")
                         .commit();
                 break;
-
+            default:
+                break;
         }
 
-        mDrawerLayout.closeDrawer(mDrawerRelative);
+        mDrawerLayout.closeDrawer(mDrawerRelativeLeft);
 
 
         /*/ update selected item and title, then close the drawer
@@ -570,6 +669,7 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
                 String searchquery = String.valueOf(searchView.getQuery());
                 Log.d("Search", searchquery);
                 performSearch(searchquery);
+                sharedPrefs.edit().putString("query", searchquery).commit();
                 mensu.collapseActionView();
                 searchView.setIconified(true);
                 return false;

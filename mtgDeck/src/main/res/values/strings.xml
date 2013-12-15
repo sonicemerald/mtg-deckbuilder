@@ -25,6 +25,18 @@
         <item>Life Counter</item>
     </string-array>
 
+    <string-array name="nav_drawer_sorting_items">
+        <item>All</item>
+        <item>Planeswalkers</item>
+        <item>Creatures</item>
+        <item>Artifacts</item>
+        <item>Enchantments</item>
+        <item>Sorcery\'s</item>
+        <item>Instants</item>
+        <item>Land</item>
+    </string-array>
+
+
     <!-- Nav Drawer List Item Icons -->
     <!-- Keep them in order as the titles are in -->
     <!-- Will require CustomListView Adapter -->

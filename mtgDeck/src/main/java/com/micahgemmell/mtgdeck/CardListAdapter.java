@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.micahgemmell.mtgdeck.Card.Card;
+
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
