@@ -58,6 +58,8 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
     List<Card> cards;
     List<Card> Rarity;
     List<Card> SearchResults;
+    private List<Card> AllCards;
+
 
     ArrayAdapter<Card> adapter;
     static JSONArray jArray;
@@ -82,8 +84,7 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
     DrawerLayout mDrawerLayout;
     DrawerItemClickListener dListener;
     RelativeLayout mDrawerRelative;
-    CharSequence mTitle;
-    CharSequence mDrawerTitle;
+    CharSequence mDrawerTitle = "Menu";
     String[] navMenuItems;
 
     // Constants for diceroller & lifeviewer
@@ -94,35 +95,28 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
     //Random number generator
     long randomSeed = System.currentTimeMillis();
     Random generator = new Random(randomSeed);
-    private List<Card> AllCards;
     private String query;
     private String cQuery;
-    boolean abool;
     private SharedPreferences sharedPrefs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d("on", "Create called");
 
         sharedPrefs = this.getSharedPreferences("com.micahgemmell.mtgDeck", Context.MODE_PRIVATE);
         spinnerPosition = sharedPrefs.getInt("spinnerPos", 0);
 
-        Log.d("spinner", String.valueOf(spinnerPosition));
-
-
         // Setup Card Container
         AllCards = new ArrayList<Card>();
         cards = new ArrayList<Card>();
-        deck = new ArrayList<Card>(); // a deck of cards
+        deck = new ArrayList<Card>();
         Rarity = new ArrayList<Card>();
         SearchResults = new ArrayList<Card>();
-        Log.d("searchResults Sze", String.valueOf(SearchResults.size()));
 
         cardSetCode_array = getResources().getStringArray(R.array.sets);
 
         adapter = new CardListAdapter(this, R.layout.card_list_row, cards);
-        Log.d("adapter", String.valueOf(adapter.getCount()));
         listView_f = new ListViewFragment(cards);
 
         if (savedInstanceState == null){
@@ -158,96 +152,16 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
-
-        Intent intent = getIntent();
-        Log.d("Sre", intent.toString());
-
-        BroadcastReceiver receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                onNewIntent(intent);
-                intent = getIntent();
-                Log.d("Sre", intent.toString());
-                if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-                    query = intent.getStringExtra(SearchManager.QUERY).toLowerCase();
-                    //performSearch(query);
-                    System.out.println(query);
-                    Log.d("SEArchResults", String.valueOf(SearchResults.size()));
-                }
-            }
-        };
-
-        IntentFilter filter = new IntentFilter("android.intent.action.SEARCH");
-
-        registerReceiver(receiver, filter);
-
-
-        SearchView.OnQueryTextListener qistener;
-
-
-
-
     }
-
-
-//    protected void onStart(){
-//        super.onStart();
-//
-//        //Search
-//        Intent intent = getIntent();
-//        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-//
-//            query = intent.getStringExtra(SearchManager.QUERY).toLowerCase();
-//            sharedPrefs.edit().putString("query", query).commit();
-//
-//            //use the query to search your data somehow
-//
-//
-//
-//        performSearch(query);
-//        System.out.println(query);
-//        Log.d("SEArchResults", String.valueOf(SearchResults.size()));
-//        adapter = new CardListAdapter(this, R.layout.card_list_row, SearchResults);
-//        listView_f = new ListViewFragment(SearchResults);
-//        getFragmentManager().beginTransaction()
-//                .detach(listView_f)
-//                .attach(listView_f)
-//                .addToBackStack("Search")
-//                .commit();
-//        }
-//    };
-
-    protected void onRestart(){
-        super.onRestart();
-        Log.d("Restart", "R");
-    };
 
     protected void onResume(){
         super.onResume();
         spinnerPosition = sharedPrefs.getInt("spinnerPos", 0);
-
-
-
-        Log.d("resume", "res");
     };
 
     protected void onPause(){
         super.onPause();
         sharedPrefs.edit().putInt("spinnerPos", spinnerPosition).commit();
-
-
-
-        Log.d("onPause", "pased".concat(String.valueOf(spinnerPosition)));
-    };
-
-    @Override
-    protected void onStop(){
-        super.onStop();
-        Log.d("onStop", "destry");
-    }
-
-    protected void onDestroy(){
-        super.onDestroy();
     };
 
 
@@ -649,18 +563,6 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         final SearchView searchView =
                 (SearchView) menu.findItem(R.id.search).getActionView();
-//        View.OnClickListener istener = new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (searchView != null) {
-//                    searchView.getQuery();
-//try{                    Log.d("s", query);
-//                } catch (NullPointerException n){}
-//                }
-//            }
-//        };
-//
-//        searchView.setOnSearchClickListener(istener);
         SearchView.OnQueryTextListener q = new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
