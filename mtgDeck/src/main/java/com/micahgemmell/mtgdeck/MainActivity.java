@@ -372,7 +372,7 @@ public class MainActivity extends Activity implements ListViewFragment.OnCardVie
 
                                     try{ card.setColor(jObject.getJSONArray("colors")); }
                                     catch (JSONException e){
-                                        card.setColor(new JSONArray(new String("n")));
+                                        card.setColor(new JSONArray());
                                     }
                                     try{ card.setSubtype(jObject.getString("subtypes"));
                                     } catch (JSONException e) {
