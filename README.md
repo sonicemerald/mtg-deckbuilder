@@ -10,4 +10,4 @@ The goal of the app is to have a easy to use deck-building app for Magic the Gat
 Currently, the deck-building aspect of the app is lacking, 
 but you can view cards from each set, and add them to a list.
 
-This is an old project: Updated version (for Lollipop!) will be on github soon.
+This is an old project. Updated version: https://github.com/sonicemerald/mtg-cardviewer
